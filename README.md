@@ -1,5 +1,3 @@
-# PopularMoviesAndroid
-
 # Popular Movies
 
 Stage 1 of Popular Movies app required to complete Udacity Android Developer Nanodegree.
