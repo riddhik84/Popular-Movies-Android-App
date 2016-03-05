@@ -10,10 +10,10 @@ With this app, you can:
 
 ### Screenshots
 
-<img src="screenshots/Main_Screen.png" width="50%" />
-<img src="screenshots/Detail_Screen.png" width="50%" />
-<img src="screenshots/Highly_Rated.png" width="50%" />
-<img src="screenshots/Settings_Screen.png" width="50%" />
+<img src="screenshots/Main_Screen.png" width="40%" />
+<img src="screenshots/Detail_Screen.png" width="40%" />
+<img src="screenshots/Highly_Rated.png" width="40%" />
+<img src="screenshots/Settings_Screen.png" width="40%" />
 
 ## Libraries
 
