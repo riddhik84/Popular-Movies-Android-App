@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    >
 
     <ImageView
         android:id="@+id/movie_poster"
@@ -13,7 +15,7 @@
         android:id="@+id/movie_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="#2aff27"
+        android:textColor="@color/white"
         android:textSize="15dp"
         android:textStyle="bold"
         android:gravity="center"/>

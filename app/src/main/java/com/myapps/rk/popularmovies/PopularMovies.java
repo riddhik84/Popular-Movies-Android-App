@@ -8,14 +8,23 @@ import android.util.Log;
 public class PopularMovies {
 
     String movieName;
-    //int moviePoster;
     String moviePoster;
+    String movieOverview;
+    String movieRating;
+    String movieReleaseDate;
 
-    public PopularMovies(String movieName, String moviePoster)
+    public PopularMovies(String movieName, String moviePoster, String movieOverview,
+                         String movieRating, String movieReleaseDate)
     {
         this.movieName = movieName;
-        Log.d("", "Movie name in class ***************" +movieName);
+        //Log.d("", "Movie name in class ***************" +movieName);
         this.moviePoster = moviePoster;
-        Log.d("", "Movie Poster name in class ***************" +moviePoster);
+        //Log.d("", "Movie Poster name in class ***************" +moviePoster);
+        this.movieOverview = movieOverview;
+        //Log.d("", "Movie Overview name in class ***************" +movieOverview);
+        this.movieRating = movieRating;
+        //Log.d("", "Movie Rating in class ***************" +movieRating);
+        this.movieReleaseDate = movieReleaseDate;
+        //Log.d("", "Movie movieReleaseDate name in class ***************" +movieReleaseDate);
     }
 }

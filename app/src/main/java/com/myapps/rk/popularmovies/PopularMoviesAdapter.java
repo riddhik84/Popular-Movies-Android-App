@@ -29,29 +29,29 @@ public class PopularMoviesAdapter extends ArrayAdapter<PopularMovies> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         PopularMovies popularMovies = getItem(position);
-        Log.d(LOG_TAG, "Position number.....*************** " +position);
+        //Log.d(LOG_TAG, "Position number.....*************** " +position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.movies_list_item, parent, false);
-            Log.d(LOG_TAG, "Inside if (converview == null) *************** ");
+            //Log.d(LOG_TAG, "Inside if (converview == null) *************** ");
         }
 
             TextView movieName = (TextView) convertView.findViewById(R.id.movie_name);
             movieName.setText(popularMovies.movieName);
-            Log.d(LOG_TAG, "Movie name is *******************" + popularMovies.movieName);
+            //Log.d(LOG_TAG, "Movie name is *******************" + popularMovies.movieName);
 
             ImageView moviePoster = (ImageView) convertView.findViewById(R.id.movie_poster);
             //moviePoster.setImageResource(popularMovies.moviePoster);
-            Log.d(LOG_TAG, "Movie Poster is *******************" + popularMovies.moviePoster);
-
+            //Log.d(LOG_TAG, "Movie Poster is *******************" + popularMovies.moviePoster);
             Picasso.with(getContext()).
                     load(popularMovies.moviePoster).
                     placeholder(R.drawable.placeholder).
+                    error(R.drawable.error).
                     noFade().
-                    fit().//resize(500, 600)
-                    centerCrop().
+                    fit().
+                    //resize(500, 600)
+                    //centerCrop().
                     into(moviePoster);
-
 
         return convertView;
     }

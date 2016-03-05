@@ -69,17 +69,23 @@ public class MainActivityFragment extends Fragment {
        View rootview = inflater.inflate(R.layout.fragment_main, container, false);
        ButterKnife.bind(this, rootview);
 
-       //GridView moviesGrid = (GridView) rootview.findViewById(R.id.movies_grid);
        //List<PopularMovies> dummyList = new ArrayList<PopularMovies>(Arrays.asList(dummyData));
-        //Log.d("", "List size....... ****" +dummyList.size());
+       //Log.d("", "List size....... ****" +dummyList.size());
+       //moviesAdapter = new PopularMoviesAdapter(getActivity(), dummyList);
 
-       // moviesAdapter = new PopularMoviesAdapter(getActivity(), dummyList);
         moviesAdapter = new PopularMoviesAdapter(getActivity(), new ArrayList<PopularMovies>());
         moviesGrid.setAdapter(moviesAdapter);
+
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                startActivity(new Intent(getActivity(), MovieDetailActivity.class).putExtra(Intent.EXTRA_TEXT, "Test Message"));
+                Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+                intent.putExtra("MovieThumbnail", moviesAdapter.getItem(i).moviePoster);
+                intent.putExtra("MovieName", moviesAdapter.getItem(i).movieName);
+                intent.putExtra("MovieReleaseDate", moviesAdapter.getItem(i).movieReleaseDate);
+                intent.putExtra("MovieRatings", moviesAdapter.getItem(i).movieRating);
+                intent.putExtra("MovieOverview", moviesAdapter.getItem(i).movieOverview);
+                startActivity(intent);
             }
         });
 
@@ -98,33 +104,38 @@ public class MainActivityFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortOrder = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_default));
-        Log.d(LOG_TAG, "Selected sort order from settings is...***********" +sortOrder);
+        //Log.d(LOG_TAG, "Selected sort order from settings is...***********" +sortOrder);
         fetchMovies.execute(sortOrder);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(LOG_TAG, "******* Inside onStart()");
+        //Log.d(LOG_TAG, "******* Inside onStart()");
         updateMoviesList();
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, PopularMovies[]> {
 
-        private final String LOG_TAG = "***";
+        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
         public FetchMoviesTask() {
             super();
         }
 
-        //sort by popularity:
-        //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=
-        //sort by highly ratings:
-        //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=
+        /*
+        sort by popularity:
+        http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=
+        sort by highly rated:
+        http://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key
+        */
+
         @Override
         protected PopularMovies[] doInBackground(String... params) {
 
             PopularMovies[] moviesData = null;
+            //API KEY
+            final String apiKey = BuildConfig.MOVIEDB_API_KEY;
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -133,18 +144,14 @@ public class MainActivityFragment extends Fragment {
 
             // Will contain the raw JSON response as a string.
             String moviesJsonString = null;
-            String format = "json";
 
-            //Add api key
-            String apiKey = "";
+            final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+            final String QUERY_PARAM = "sort_by";
+            final String API_KEY = "api_key";
+
+            String queryParamValue = "popularity.desc";
 
             try {
-
-                final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
-                final String QUERY_PARAM = "sort_by";
-                final String API_KEY = "api_key";
-
-                String queryParamValue = "popularity.desc";
 
                 if(params[0].equals("mostpopular"))
                 {
@@ -160,7 +167,7 @@ public class MainActivityFragment extends Fragment {
                         .build();
 
                 URL url = new URL(buildUri.toString());
-                Log.d(LOG_TAG, "******* Build URL = " + buildUri.toString());
+                //Log.d(LOG_TAG, "******* Build URL = " + buildUri.toString());
 
                 // Create the request to MoviesDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -189,7 +196,7 @@ public class MainActivityFragment extends Fragment {
                     return null;
                 }
                 moviesJsonString = buffer.toString();
-                Log.d(LOG_TAG, "****** Movies JSON string = " + moviesJsonString);
+                //Log.d(LOG_TAG, "****** Movies JSON string = " + moviesJsonString);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -213,7 +220,6 @@ public class MainActivityFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
@@ -229,25 +235,34 @@ public class MainActivityFragment extends Fragment {
 
         protected PopularMovies[] getMoviesFromJson(String movieJsonString) throws JSONException
         {
-            PopularMovies[] tempPopularMoviesDb;
+            PopularMovies[] popularMoviesDb;
+            final String posterBaseURL = "http://image.tmdb.org/t/p/";
+            final String posterImageType="w185";
+
             JSONObject moviesOutput = new JSONObject(movieJsonString);
             JSONArray results = moviesOutput.getJSONArray("results");
-            Log.d(LOG_TAG, "****** JSON result length.. " +results.length());
+            //Log.d(LOG_TAG, "****** JSON result length.. " +results.length());
 
-            tempPopularMoviesDb = new PopularMovies[results.length()];
-            String posterBaseURL = "http://image.tmdb.org/t/p/";
-            String posterImageType="w185";
+            popularMoviesDb = new PopularMovies[results.length()];
 
             for(int i = 0; i < results.length(); i++)
             {
                 JSONObject movieData = results.getJSONObject(i);
-                Log.d(LOG_TAG, "Fetched movie name......******* " +movieData.getString("original_title"));
-                Log.d(LOG_TAG, "Fetched movie Poster path......******* " +movieData.getString("poster_path"));
-                tempPopularMoviesDb[i] = new PopularMovies((movieData.getString("original_title")), posterBaseURL + posterImageType + movieData.getString("poster_path") );
+                //Log.d(LOG_TAG, "Fetched movie name......******* " +movieData.getString("original_title"));
+                //Log.d(LOG_TAG, "Fetched movie Poster path......******* " +movieData.getString("poster_path"));
+                //Log.d(LOG_TAG, "Fetched movie overview......******* " +movieData.getString("overview"));
+                //Log.d(LOG_TAG, "Fetched movie overview......******* " +movieData.getString("vote_average"));
+                //Log.d(LOG_TAG, "Fetched movie overview......******* " +movieData.getString("release_date"));
+
+                popularMoviesDb[i] = new PopularMovies((movieData.getString("original_title")),
+                        posterBaseURL + posterImageType + movieData.getString("poster_path"),
+                        movieData.getString("overview"),
+                        movieData.getString("vote_average"),
+                        movieData.getString("release_date"));
             }
 
-            Log.d(LOG_TAG, "****** tempPopularMoviesDb length.. " +tempPopularMoviesDb.length);
-            return tempPopularMoviesDb;
+            //Log.d(LOG_TAG, "****** tempPopularMoviesDb length.. " +popularMoviesDb.length);
+            return popularMoviesDb;
         }
     }
 }
