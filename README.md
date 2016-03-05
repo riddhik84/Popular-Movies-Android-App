@@ -10,10 +10,10 @@ With this app, you can:
 
 ### Screenshots
 
-<img src="screenshots/MainScreen.png" width="40%" />
-<img src="screenshots/DetailScreen.png" width="40%" />
-<img src="screenshots/HighlyRated.png" width="40%" />
-<img src="screenshots/SettingsScreen.png" width="40%" />
+<img src="screenshots/Main_Screen.png" width="40%" />
+<img src="screenshots/Detail_Screen.png" width="40%" />
+<img src="screenshots/Highly_Rated.png" width="40%" />
+<img src="screenshots/Settings_Screen.png" width="40%" />
 
 ## Libraries
 
@@ -25,4 +25,4 @@ With this app, you can:
 This app uses [The Movie Database](https://www.themoviedb.org/documentation/api) API to retrieve movies.
 You must provide your own API key in order to build the app. When you get it, just paste it to:
 Gradle.properties
-MyMovieDBApiKey=<YourAPIKey>
+MyMovieDBApiKey="<YourAPIKey>"
