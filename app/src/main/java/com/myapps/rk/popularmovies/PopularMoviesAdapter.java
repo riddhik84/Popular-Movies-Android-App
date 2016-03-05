@@ -36,8 +36,8 @@ public class PopularMoviesAdapter extends ArrayAdapter<PopularMovies> {
             //Log.d(LOG_TAG, "Inside if (converview == null) *************** ");
         }
 
-            TextView movieName = (TextView) convertView.findViewById(R.id.movie_name);
-            movieName.setText(popularMovies.movieName);
+            //TextView movieName = (TextView) convertView.findViewById(R.id.movie_name);
+            //movieName.setText(popularMovies.movieName);
             //Log.d(LOG_TAG, "Movie name is *******************" + popularMovies.movieName);
 
             ImageView moviePoster = (ImageView) convertView.findViewById(R.id.movie_poster);
@@ -49,7 +49,7 @@ public class PopularMoviesAdapter extends ArrayAdapter<PopularMovies> {
                     error(R.drawable.error).
                     noFade().
                     fit().
-                    //resize(500, 600)
+                    //resize(600, 600).
                     //centerCrop().
                     into(moviePoster);
 

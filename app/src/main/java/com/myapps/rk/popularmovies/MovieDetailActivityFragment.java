@@ -51,7 +51,7 @@ public class MovieDetailActivityFragment extends Fragment {
             //Log.d(LOG_TAG, "Movie thumbnail in detail screen ******** " +movieThumbnail);
             Picasso.with(getContext()).
                     load(movieThumbnail).
-                    placeholder(R.drawable.placeholder).
+                    placeholder(R.drawable.placeholder_thumbnail).
                     error(R.drawable.error_thumbnail).
                     noFade().
                     //fit().
