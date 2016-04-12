@@ -13,4 +13,7 @@
     <string name="title_activity_movie_detail">Movie Detail</string>
     <string name="hello_world">Hello world!</string>
 
+    <string name="provider_authority">com.myapps.rk.popularmovies</string>
+
+
 </resources>

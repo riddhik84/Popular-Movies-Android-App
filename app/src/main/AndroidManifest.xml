@@ -34,6 +34,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.myapps.rk.popularmovies.MainActivity" />
         </activity>
+
+        <provider
+            android:authorities = "@string/provider_authority"
+            android:name = ".data.MoviesProvider"
+            android:exported="false"
+            android:syncable="true"
+            />
     </application>
 
 </manifest>
