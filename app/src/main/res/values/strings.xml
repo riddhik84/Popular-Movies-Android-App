@@ -6,14 +6,25 @@
     <string name="pref_sort_key">mostpopular</string>
     <string name="pref_sort_most_popular">mostpopular</string>
     <string name="pref_sort_high_rated">highlyrated</string>
+    <string name ="pref_sort_favourite">favourite</string>
     <string name="pref_sort_default">mostpopular</string>
 
     <string name="pref_sort_most_popular_label">Most Popular</string>
     <string name="pref_sort_high_rated_label">Highly Rated</string>
+    <string name="pref_sort_favourite_label">Favourite</string>
+
     <string name="title_activity_movie_detail">Movie Detail</string>
     <string name="hello_world">Hello world!</string>
 
     <string name="provider_authority">com.myapps.rk.popularmovies</string>
+
+    <string name="movies_base_url">http://api.themoviedb.org/3/discover/movie?</string>
+
+    <string name="menu_refresh">Refresh</string>
+
+    <string name="title_trailers">Trailers</string>
+    <string name="title_reviews">Reviews</string>
+
 
 
 </resources>

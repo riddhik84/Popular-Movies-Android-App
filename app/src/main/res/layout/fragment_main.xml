@@ -5,18 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/black"
-    tools:context=".MainActivityFragment" >
+    android:background="@android:color/holo_red_light"
+    tools:context=".ui.MainActivityFragment">
 
     <GridView
-    android:id="@+id/movies_grid"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:columnWidth="@dimen/grid_column_width"
-    android:numColumns="2"
-    android:verticalSpacing="@dimen/grid_vertical_spacing"
-    android:horizontalSpacing="@dimen/grid_horizontal_spacing"
-    android:stretchMode="columnWidth"
-    android:gravity="fill" />
+        android:id="@+id/movies_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@android:color/holo_red_light"
+        android:columnWidth="@dimen/grid_column_width"
+        android:gravity="fill"
+        android:horizontalSpacing="@dimen/grid_horizontal_spacing"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="@dimen/grid_vertical_spacing" />
+
+    <TextView
+        android:id="@+id/no_movies_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:visibility="gone"
+        />
 
 </LinearLayout>
