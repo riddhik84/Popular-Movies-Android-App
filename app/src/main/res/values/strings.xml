@@ -10,8 +10,8 @@
     <string name="pref_sort_default">mostpopular</string>
 
     <string name="pref_sort_most_popular_label">Most Popular</string>
-    <string name="pref_sort_high_rated_label">Highly Rated</string>
-    <string name="pref_sort_favourite_label">Favourite</string>
+    <string name="pref_sort_high_rated_label">Highest Rated</string>
+    <string name="pref_sort_favourite_label">Favourites</string>
 
     <string name="title_activity_movie_detail">Movie Detail</string>
     <string name="hello_world">Hello world!</string>

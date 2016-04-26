@@ -171,7 +171,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     void onFilterChanged() {
         Log.d(LOG_TAG, "In DetailF onFilterChanged()");
         String sortOrder = Utility.getPreferredLocation(getContext());
-        if(sortOrder != mSortOrder){
+        if (sortOrder != mSortOrder) {
             updateTrailersReviewsList();
             getLoaderManager().restartLoader(MOVIE_DETAIL_LOADER, null, this);
             getLoaderManager().restartLoader(MOVIE_TRAILERS_LOADER, null, this);
@@ -184,9 +184,9 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
-        onFilterChanged();
+       // onFilterChanged();
     }
 
     @Override
