@@ -102,6 +102,10 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     TextView movie_overview;
     @Bind(R.id.movie_release_date)
     TextView movie_release_date;
+    @Bind(R.id.reviews_header)
+    TextView movie_reviews_header;
+    @Bind(R.id.trailers_header)
+    TextView movie_trailers_header;
 
     ImageButton favButton;
     ListView trailersListView;
@@ -322,6 +326,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
                     cursor.moveToFirst();
                     do {
+                        movie_trailers_header.setVisibility(View.VISIBLE);
                         mTrailersAdapter.swapCursor(cursor);
                  //       Log.d(LOG_TAG, "URL: " + cursor.getString(cursor.getColumnIndex(Trailers.COLUMN_KEY)));
                     }
@@ -350,6 +355,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
                     cursor.moveToFirst();
                     do {
+                        movie_reviews_header.setVisibility(View.VISIBLE);
                         mReviewsAdapter.swapCursor(cursor);
                     //    Log.d(LOG_TAG, "Review: " + cursor.getString(cursor.getColumnIndex(Reviews.COLUMN_CONTENT)));
                     }

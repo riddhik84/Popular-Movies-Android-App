@@ -107,7 +107,8 @@
                 android:text="@string/title_trailers"
                 android:textColor="@color/white"
                 android:textSize="20dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
             <ListView
                 android:id="@+id/trailers_list_view"
@@ -127,7 +128,8 @@
                 android:text="@string/title_reviews"
                 android:textColor="@color/white"
                 android:textSize="20dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
 
             <ListView
