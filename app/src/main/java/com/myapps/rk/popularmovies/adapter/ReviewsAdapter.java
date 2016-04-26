@@ -39,11 +39,11 @@ public class ReviewsAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String reviewAuthor = cursor.getString(cursor.getColumnIndex(MoviesContract.Reviews.COLUMN_AUTHOR));
-        Log.d(LOG_TAG, "*************** Movie reviewAuthor ********* " + reviewAuthor);
+      //  Log.d(LOG_TAG, "*************** Movie reviewAuthor ********* " + reviewAuthor);
         viewHolder.reviewAuthor.setText("Author: " + reviewAuthor);
 
         String reviewContent = cursor.getString(cursor.getColumnIndex(MoviesContract.Reviews.COLUMN_CONTENT));
-        Log.d(LOG_TAG, "*************** Movie reviewContent ********* " + reviewContent);
+      //  Log.d(LOG_TAG, "*************** Movie reviewContent ********* " + reviewContent);
         viewHolder.reviewContent.setText("Review: " + reviewContent + "\n");
     }
 

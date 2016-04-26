@@ -118,8 +118,8 @@ public class MoviesContract {
         }
 
         public static Uri buildTrailersUriWithMovieId(String movieID) {
-            Log.d("LOG_TAG", "buildTrailersUriWithMovieId() movieID " + movieID);
-            Log.d("LOG_TAG", "buildTrailersUriWithMovieId() Uri " + CONTENT_URI.buildUpon().appendPath(movieID).build());
+          //  Log.d("LOG_TAG", "buildTrailersUriWithMovieId() movieID " + movieID);
+           // Log.d("LOG_TAG", "buildTrailersUriWithMovieId() Uri " + CONTENT_URI.buildUpon().appendPath(movieID).build());
 
             return CONTENT_URI.buildUpon().appendPath(movieID).build();
         }

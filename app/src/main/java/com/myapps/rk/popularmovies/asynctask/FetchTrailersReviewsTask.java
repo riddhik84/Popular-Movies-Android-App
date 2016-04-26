@@ -45,7 +45,7 @@ public class FetchTrailersReviewsTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected Void doInBackground(String... params) {
-        Log.d(LOG_TAG, "FetchTrailersReviewsTask doInBackground()");
+      //  Log.d(LOG_TAG, "FetchTrailersReviewsTask doInBackground()");
 
         if (params.length == 0) {
             return null;
@@ -72,31 +72,31 @@ public class FetchTrailersReviewsTask extends AsyncTask<String, Void, Void> {
                     .appendPath(trailers_tag)
                     .appendQueryParameter(API_KEY, apiKey)
                     .build();
-            Log.d(LOG_TAG, "buildTrailersUri " + buildTrailersUri);
+         //   Log.d(LOG_TAG, "buildTrailersUri " + buildTrailersUri);
 
             Uri buildReviewsUri = Uri.parse(BASE_URL).buildUpon()
                     .appendPath(movieID)
                     .appendPath(reviews_tag)
                     .appendQueryParameter(API_KEY, apiKey)
                     .build();
-            Log.d(LOG_TAG, "buildReviewsUri " + buildReviewsUri);
+          //  Log.d(LOG_TAG, "buildReviewsUri " + buildReviewsUri);
 
             URL trailersUrl = new URL(buildTrailersUri.toString());
-            Log.d(LOG_TAG, "trailersUrl " + trailersUrl);
+          //  Log.d(LOG_TAG, "trailersUrl " + trailersUrl);
             URL reviewsUrl = new URL(buildReviewsUri.toString());
-            Log.d(LOG_TAG, "reviewsUrl " + reviewsUrl);
+         //   Log.d(LOG_TAG, "reviewsUrl " + reviewsUrl);
 
             //Request/Response Trailers
             HttpRequestResponse hh = new HttpRequestResponse();
-            Log.d(LOG_TAG, "http request URL " + trailersUrl);
+          //  Log.d(LOG_TAG, "http request URL " + trailersUrl);
             trailersJsonResponse = hh.doGetRequest(trailersUrl.toString());
-            Log.d(LOG_TAG, "trailersJsonResponse: " + trailersJsonResponse);
+          //  Log.d(LOG_TAG, "trailersJsonResponse: " + trailersJsonResponse);
 
             //Request/Response Reviews
             HttpRequestResponse hrr = new HttpRequestResponse();
-            Log.d(LOG_TAG, "http request URL " + reviewsUrl);
+          //  Log.d(LOG_TAG, "http request URL " + reviewsUrl);
             reviewsJsonResponse = hrr.doGetRequest(reviewsUrl.toString());
-            Log.d(LOG_TAG, "reviewsJsonResponse: " + reviewsJsonResponse);
+           // Log.d(LOG_TAG, "reviewsJsonResponse: " + reviewsJsonResponse);
 
             //Get data from Json and insert it in table
             getTrailersDataFromJson(trailersJsonResponse, movieID);
@@ -115,7 +115,7 @@ public class FetchTrailersReviewsTask extends AsyncTask<String, Void, Void> {
     }
 
     protected void getTrailersDataFromJson(String trailersJsonResponse, String movieID) throws JSONException {
-        Log.d(LOG_TAG, "Inside getTrailersDataFromJson");
+      //  Log.d(LOG_TAG, "Inside getTrailersDataFromJson");
 
         final String TRAILER_ID = "id";
         final String KEY = "key";
@@ -127,7 +127,7 @@ public class FetchTrailersReviewsTask extends AsyncTask<String, Void, Void> {
 
         JSONObject trailersOutput = new JSONObject(trailersJsonResponse);
         JSONArray trailersArray = trailersOutput.getJSONArray("results");
-        Log.d(LOG_TAG, "trailersArray length " + trailersArray.length());
+      //  Log.d(LOG_TAG, "trailersArray length " + trailersArray.length());
 
         Vector<ContentValues> cVVector = new Vector<ContentValues>(trailersArray.length());
 
@@ -137,9 +137,9 @@ public class FetchTrailersReviewsTask extends AsyncTask<String, Void, Void> {
             JSONObject data = trailersArray.getJSONObject(i);
 
             ContentValues trailerValues = new ContentValues();
-            Log.d(LOG_TAG, "Inside getTrailersDataFromJson KEY " + data.getString(KEY));
+        //    Log.d(LOG_TAG, "Inside getTrailersDataFromJson KEY " + data.getString(KEY));
             youttube_url = YOUTUBE_BASE_URL + data.getString(KEY);
-            Log.d(LOG_TAG, "Inside getTrailersDataFromJson youttube_url " + youttube_url);
+         //   Log.d(LOG_TAG, "Inside getTrailersDataFromJson youttube_url " + youttube_url);
 
             trailerValues.put(Trailers.COLUMN_TRAILER_ID, data.getString(TRAILER_ID));
             trailerValues.put(Trailers.COLUMN_KEY, youttube_url);
@@ -161,13 +161,13 @@ public class FetchTrailersReviewsTask extends AsyncTask<String, Void, Void> {
             cVVector.toArray(cvArray);
             inserted = mContext.getContentResolver().bulkInsert(Trailers.CONTENT_URI, cvArray);
         }
-        Log.d(LOG_TAG, "Trailers Task Complete. " + inserted + " Inserted");
+     //   Log.d(LOG_TAG, "Trailers Task Complete. " + inserted + " Inserted");
 
         //TestTable(Movies.TABLE_NAME, sortOrder);
     }
 
     protected void getReviewsDataFromJson(String reviewsJsonResponse, String movieID) throws JSONException {
-        Log.d(LOG_TAG, "getReviewsDataFromJson");
+     //   Log.d(LOG_TAG, "getReviewsDataFromJson");
 
         final String REVIEW_ID = "id";
         final String AUTHOR = "author";
@@ -176,7 +176,7 @@ public class FetchTrailersReviewsTask extends AsyncTask<String, Void, Void> {
 
         JSONObject reviewsOutput = new JSONObject(reviewsJsonResponse);
         JSONArray reviewsArray = reviewsOutput.getJSONArray("results");
-        Log.d(LOG_TAG, "reviewsArray length " + reviewsArray.length());
+     //   Log.d(LOG_TAG, "reviewsArray length " + reviewsArray.length());
 
         Vector<ContentValues> cVVector = new Vector<ContentValues>(reviewsArray.length());
 
@@ -204,7 +204,7 @@ public class FetchTrailersReviewsTask extends AsyncTask<String, Void, Void> {
             cVVector.toArray(cvArray);
             inserted = mContext.getContentResolver().bulkInsert(Reviews.CONTENT_URI, cvArray);
         }
-        Log.d(LOG_TAG, "Reviews Task Complete. " + inserted + " Inserted");
+     //   Log.d(LOG_TAG, "Reviews Task Complete. " + inserted + " Inserted");
 
         //TestTable(Movies.TABLE_NAME, sortOrder);
     }

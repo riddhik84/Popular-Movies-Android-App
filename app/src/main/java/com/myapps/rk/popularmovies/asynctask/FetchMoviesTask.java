@@ -64,7 +64,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
 
         try {
             if (params[0].equalsIgnoreCase(mContext.getResources().getString(R.string.pref_sort_favourite))) {
-                Log.d(LOG_TAG, "sortOrder " + params[0]);
+            //    Log.d(LOG_TAG, "sortOrder " + params[0]);
                 getMoviesFromFavTable(params[0]);
             } else {
 
@@ -80,14 +80,14 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
                         .build();
 
                 URL moviesUrl = new URL(buildUri.toString());
-                Log.d(LOG_TAG, "Build URL = " + buildUri.toString());
+             //   Log.d(LOG_TAG, "Build URL = " + buildUri.toString());
 
                 //Request/Response to/from MoviesDB
                 HttpRequestResponse hrr = new HttpRequestResponse();
-                Log.d(LOG_TAG, "http request URL " + moviesUrl);
+             //   Log.d(LOG_TAG, "http request URL " + moviesUrl);
 
                 moviesJsonResponse = hrr.doGetRequest(moviesUrl.toString());
-                Log.d(LOG_TAG, "json response: " + moviesJsonResponse);
+            //    Log.d(LOG_TAG, "json response: " + moviesJsonResponse);
 
                 //Get data from Json and insert it in table
                 getMoviesFromJson(moviesJsonResponse, sortOrder);
@@ -104,7 +104,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
     }
 
     protected void getMoviesFromJson(String movieJsonString, String sortOrder) throws JSONException {
-        Log.d(LOG_TAG, "getMoviesFromJson() sortOrder " + sortOrder);
+     //   Log.d(LOG_TAG, "getMoviesFromJson() sortOrder " + sortOrder);
 
         final String POSTER_PATH = "poster_path";
         final String OVERVIEW = "overview";
@@ -152,13 +152,13 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
             cVVector.toArray(cvArray);
             inserted = mContext.getContentResolver().bulkInsert(Movies.CONTENT_URI, cvArray);
         }
-        Log.d(LOG_TAG, "FetchMoviesTask Complete. " + inserted + " Inserted");
+      //  Log.d(LOG_TAG, "FetchMoviesTask Complete. " + inserted + " Inserted");
 
         TestTable(Movies.TABLE_NAME, sortOrder);
     }
 
     protected void getMoviesFromFavTable(String sortOrder) throws JSONException {
-        Log.d(LOG_TAG, "getMoviesFromFavTable() sortOrder " + sortOrder);
+      //  Log.d(LOG_TAG, "getMoviesFromFavTable() sortOrder " + sortOrder);
 
         final String POSTER_PATH = "poster_path";
         final String OVERVIEW = "overview";
@@ -179,22 +179,22 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
          * String[] args = { "first string", "second@string.com" };
          Cursor cursor = db.query("TABLE_NAME", null, "name=? AND email=?", args, null);
          */
-        Log.d(LOG_TAG, "In TestTable() sortorder: " + sortOrder);
+     //   Log.d(LOG_TAG, "In TestTable() sortorder: " + sortOrder);
         String[] selectionArgs = {sortOrder};
         MoviesDbHelper db = new MoviesDbHelper(mContext);
 
         Cursor cursor = db.getReadableDatabase().rawQuery("SELECT " + Movies.COLUMN_SORT_ORDER + " FROM " + tableName, null);
 
-        Log.d(LOG_TAG, "In TestTable() Cursor count " + cursor.getCount());
+     //   Log.d(LOG_TAG, "In TestTable() Cursor count " + cursor.getCount());
         String value;
 
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             value = cursor.getString(cursor.getColumnIndex(Movies.COLUMN_SORT_ORDER));
-            Log.d(LOG_TAG, "In TestTable() Value " + value);
+         //   Log.d(LOG_TAG, "In TestTable() Value " + value);
             cursor.moveToNext();
         }
-        Log.d(LOG_TAG, "Close cursor");
+       // Log.d(LOG_TAG, "Close cursor");
         cursor.close();
     }
 }

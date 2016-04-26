@@ -80,18 +80,18 @@ public class MainActivityFragment extends Fragment
     }
 
     private void updateMoviesList() {
-        Log.d(LOG_TAG, "In updateMoviesList()");
+      //  Log.d(LOG_TAG, "In updateMoviesList()");
 
         FetchMoviesTask fetchMovies = new FetchMoviesTask(getContext());
         String sortOrder = Utility.getPreferredLocation(getContext());
-        Log.d(LOG_TAG, "Selected sort order from settings is " + sortOrder);
+      //  Log.d(LOG_TAG, "Selected sort order from settings is " + sortOrder);
 
         if (sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_most_popular))
                 || sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_high_rated))) {
-            Log.d(LOG_TAG, "sortOrder " + sortOrder);
+        //    Log.d(LOG_TAG, "sortOrder " + sortOrder);
             fetchMovies.execute(sortOrder);
         } else if (sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_favourite))) {
-            Log.d(LOG_TAG, "sortOrder " + sortOrder);
+         //   Log.d(LOG_TAG, "sortOrder " + sortOrder);
             //fetchMovies.execute(sortOrder);
             getActivity().getContentResolver().query(FavouriteMovies.buildFavouriteMoviesUri(),
                     FAVOURITE_MOVIES_COLUMNS, null, null, null);
@@ -118,7 +118,7 @@ public class MainActivityFragment extends Fragment
                 return;
             }
 
-            Log.d(LOG_TAG, "FirstLoad " + firstLoad);
+         //   Log.d(LOG_TAG, "FirstLoad " + firstLoad);
             //updateMoviesList();
 
             ContentValues moviesValues = new ContentValues();
@@ -144,7 +144,7 @@ public class MainActivityFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "In onCreateView()");
+      //  Log.d(LOG_TAG, "In onCreateView()");
 
         View rootview = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, rootview);
@@ -158,7 +158,7 @@ public class MainActivityFragment extends Fragment
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    Log.d(LOG_TAG, "MainActivityFragment:" + cursor.getString(cursor.getColumnIndex(Movies.COLUMN_MOVIE_ID)));
+                  //  Log.d(LOG_TAG, "MainActivityFragment:" + cursor.getString(cursor.getColumnIndex(Movies.COLUMN_MOVIE_ID)));
                     ((Callback) getActivity())
                             .onItemSelected(cursor.getString(cursor.getColumnIndex(Movies.COLUMN_MOVIE_ID)));
                 }
@@ -175,14 +175,14 @@ public class MainActivityFragment extends Fragment
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "In onActivityCreated()");
+      //  Log.d(LOG_TAG, "In onActivityCreated()");
         // initialize loader
         getLoaderManager().initLoader(MOVIES_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
     void onFilterChanged() {
-        Log.d(LOG_TAG, "Inside onFilterChanged()");
+      //  Log.d(LOG_TAG, "Inside onFilterChanged()");
 
         updateMoviesList();
         getLoaderManager().restartLoader(MOVIES_LOADER, null, this);
@@ -211,7 +211,7 @@ public class MainActivityFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(LOG_TAG, "In onCreateLoader()");
+      //  Log.d(LOG_TAG, "In onCreateLoader()");
 
         String sortingOrder = Utility.getPreferredLocation(getContext());
         Uri moviesUri = Movies.buildMoviesUri();
@@ -235,7 +235,7 @@ public class MainActivityFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        Log.d(LOG_TAG, "##### In onLoadFinished()");
+    //    Log.d(LOG_TAG, "##### In onLoadFinished()");
 
         if (cursor != null && cursor.getCount() > 0) {
             moviesAdapter.swapCursor(cursor);
@@ -255,7 +255,7 @@ public class MainActivityFragment extends Fragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.d(LOG_TAG, "In onLoaderReset()");
+     //   Log.d(LOG_TAG, "In onLoaderReset()");
         moviesAdapter.swapCursor(null);
     }
 

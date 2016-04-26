@@ -57,7 +57,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
                 Trailers.COLUMN_SIZE + " TEXT, " +
                 Trailers.COLUMN_MOVIE_ID + " TEXT " +
                 ");";
-        Log.d(LOG_TAG, "Create table trailers " +SQL_CREATE_TABLE_TRAILERS);
+     //   Log.d(LOG_TAG, "Create table trailers " +SQL_CREATE_TABLE_TRAILERS);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_TRAILERS);
 
         final String SQL_CREATE_TABLE_REVIEWS = "CREATE TABLE " + Reviews.TABLE_NAME +

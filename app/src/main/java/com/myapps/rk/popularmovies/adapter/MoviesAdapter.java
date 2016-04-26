@@ -41,7 +41,7 @@ public class MoviesAdapter extends CursorAdapter{
 
         //ImageView moviePoster = (ImageView) view.findViewById(R.id.movie_poster);
         String moviePosterImg = cursor.getString(cursor.getColumnIndex(MoviesContract.Movies.COLUMN_POSTER_PATH));
-        Log.d(LOG_TAG, "*************** Picasso Movie Poster ********* " + moviePosterImg);
+      //  Log.d(LOG_TAG, "*************** Picasso Movie Poster ********* " + moviePosterImg);
 
         Picasso.with(context).
                 load(moviePosterImg).

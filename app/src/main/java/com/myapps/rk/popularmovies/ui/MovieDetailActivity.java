@@ -29,9 +29,9 @@ public class MovieDetailActivity extends ActionBarActivity {
         if (savedInstanceState == null) {
             Bundle args = new Bundle();
             args.putString(Intent.EXTRA_TEXT, movieId);
-            Log.d(LOG_TAG, "Bundle MovieID " + args.getString(Intent.EXTRA_TEXT));
+        //    Log.d(LOG_TAG, "Bundle MovieID " + args.getString(Intent.EXTRA_TEXT));
 
-            Log.d(LOG_TAG, "onCreate() MovieID " +movieId);
+         //   Log.d(LOG_TAG, "onCreate() MovieID " +movieId);
             MovieDetailActivityFragment fragment = new MovieDetailActivityFragment();
             fragment.setArguments(args);
 
