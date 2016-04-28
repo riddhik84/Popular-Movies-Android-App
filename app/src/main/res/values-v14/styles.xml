@@ -1,0 +1,13 @@
+<resources>
+
+    <style name="SettingsTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/ActionBar.V14.Movies.NoTitle</item>
+    </style>
+
+    <style name="ActionBar.V14.Movies.NoTitle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/holo_red_light</item>
+        <item name="android:height">56dp</item>
+    </style>
+
+
+</resources>

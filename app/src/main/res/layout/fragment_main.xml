@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/holo_red_light"
+    android:background="@color/transparent"
     tools:context=".ui.MainActivityFragment">
 
     <GridView
@@ -16,7 +16,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:background="@android:color/holo_red_light"
+        android:background="@color/transparent"
         android:columnWidth="@dimen/grid_column_width"
         android:gravity="fill"
         android:horizontalSpacing="@dimen/grid_horizontal_spacing"

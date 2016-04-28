@@ -16,4 +16,6 @@
         <item name="logo">@mipmap/ic_launcher</item>
     </style>
 
+    <!-- Settings activity theme. -->
+    <style name="SettingsTheme" parent="AppTheme"></style>
 </resources>
