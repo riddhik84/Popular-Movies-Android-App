@@ -24,12 +24,12 @@ import com.myapps.rk.popularmovies.data.MoviesDbHelper;
 import junit.framework.Test;
 
 /**
- * Created by RKs on 4/13/2016.
+ * Created by Riddhi Kakadia on 4/13/2016.
  * <p/>
  * 1. sort by popularity:
  * http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=
  * 2. sort by highly rated:
- * http://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key
+ * http://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=
  */
 
 public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
@@ -52,7 +52,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
         //API KEY
         final String apiKey = BuildConfig.MOVIEDB_API_KEY;
 
-        // Will contain the raw JSON response as a string.
+        //Will contain the raw JSON response as a string.
         String moviesJsonResponse = null;
 
         final String MOVIES_BASE_URL = mContext.getString(R.string.movies_base_url);
@@ -64,10 +64,9 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
 
         try {
             if (params[0].equalsIgnoreCase(mContext.getResources().getString(R.string.pref_sort_favourite))) {
-            //    Log.d(LOG_TAG, "sortOrder " + params[0]);
-                getMoviesFromFavTable(params[0]);
+                return null; //param[0] will not be favourite
             } else {
-
+                //Fetch movies data
                 if (params[0].equalsIgnoreCase(mContext.getResources().getString(R.string.pref_sort_most_popular))) {
                     queryParamValue = "popularity.desc";
                 } else if (params[0].equals(mContext.getResources().getString(R.string.pref_sort_high_rated))) {
@@ -80,14 +79,12 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
                         .build();
 
                 URL moviesUrl = new URL(buildUri.toString());
-             //   Log.d(LOG_TAG, "Build URL = " + buildUri.toString());
+                //   Log.d(LOG_TAG, "Build URL = " + buildUri.toString());
 
                 //Request/Response to/from MoviesDB
                 HttpRequestResponse hrr = new HttpRequestResponse();
-             //   Log.d(LOG_TAG, "http request URL " + moviesUrl);
-
                 moviesJsonResponse = hrr.doGetRequest(moviesUrl.toString());
-            //    Log.d(LOG_TAG, "json response: " + moviesJsonResponse);
+                //    Log.d(LOG_TAG, "json response: " + moviesJsonResponse);
 
                 //Get data from Json and insert it in table
                 getMoviesFromJson(moviesJsonResponse, sortOrder);
@@ -98,13 +95,14 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
         } catch (JSONException e) {
             Log.e(LOG_TAG, "JSON Exception", e);
             return null;
-        }
+        } finally {
 
+        }
         return null;
     }
 
     protected void getMoviesFromJson(String movieJsonString, String sortOrder) throws JSONException {
-     //   Log.d(LOG_TAG, "getMoviesFromJson() sortOrder " + sortOrder);
+        //   Log.d(LOG_TAG, "getMoviesFromJson() sortOrder " + sortOrder);
 
         final String POSTER_PATH = "poster_path";
         final String OVERVIEW = "overview";
@@ -122,8 +120,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
         //Log.d(LOG_TAG, "****** JSON result length.. " + results.length());
 
         Vector<ContentValues> cVVector = new Vector<ContentValues>(moviesArray.length());
-        //ContentValues movieValues = new ContentValues();
-
         for (int i = 0; i < moviesArray.length(); i++) {
 
             fullPosterPath = POSTER_BASE_URL + POSTER_IMAGE_TYPE;
@@ -142,59 +138,42 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
             movieValues.put(Movies.COLUMN_SORT_ORDER, sortOrder); //sort order to filter movies
 
             cVVector.add(movieValues);
-            //movieValues.clear();
         }
 
         int inserted = 0;
-        // add to database
+        //add values to database
         if (cVVector.size() > 0) {
             ContentValues[] cvArray = new ContentValues[cVVector.size()];
             cVVector.toArray(cvArray);
             inserted = mContext.getContentResolver().bulkInsert(Movies.CONTENT_URI, cvArray);
         }
-      //  Log.d(LOG_TAG, "FetchMoviesTask Complete. " + inserted + " Inserted");
-
-        TestTable(Movies.TABLE_NAME, sortOrder);
-    }
-
-    protected void getMoviesFromFavTable(String sortOrder) throws JSONException {
-      //  Log.d(LOG_TAG, "getMoviesFromFavTable() sortOrder " + sortOrder);
-
-        final String POSTER_PATH = "poster_path";
-        final String OVERVIEW = "overview";
-        final String RELEASE_DATE = "release_date";
-        final String MOVIE_ID = "id";
-        final String ORIGINAL_TITLE = "original_title";
-        final String VOTE_AVERAGE = "vote_average";
-
-        final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
-        final String POSTER_IMAGE_TYPE = "w185";
-        String fullPosterPath = "";
+        //Log.d(LOG_TAG, "FetchMoviesTask Complete. " + inserted + " Inserted");
 
         //TestTable(Movies.TABLE_NAME, sortOrder);
     }
 
-    public void TestTable(String tableName, String sortOrder) {
-        /**
-         * String[] args = { "first string", "second@string.com" };
-         Cursor cursor = db.query("TABLE_NAME", null, "name=? AND email=?", args, null);
-         */
-     //   Log.d(LOG_TAG, "In TestTable() sortorder: " + sortOrder);
-        String[] selectionArgs = {sortOrder};
-        MoviesDbHelper db = new MoviesDbHelper(mContext);
+//    public void TestTable(String tableName, String sortOrder) {
+//        /**
+//         * String[] args = { "first string", "second@string.com" };
+//         Cursor cursor = db.query("TABLE_NAME", null, "name=? AND email=?", args, null);
+//         */
+//        //   Log.d(LOG_TAG, "In TestTable() sortorder: " + sortOrder);
+//        String[] selectionArgs = {sortOrder};
+//        MoviesDbHelper db = new MoviesDbHelper(mContext);
+//
+//        Cursor cursor = db.getReadableDatabase().rawQuery("SELECT " + Movies.COLUMN_SORT_ORDER + " FROM " + tableName, null);
+//
+//        //   Log.d(LOG_TAG, "In TestTable() Cursor count " + cursor.getCount());
+//        String value;
+//
+//        cursor.moveToFirst();
+//        if (cursor.getCount() > 0) {
+//            value = cursor.getString(cursor.getColumnIndex(Movies.COLUMN_SORT_ORDER));
+//            //   Log.d(LOG_TAG, "In TestTable() Value " + value);
+//            cursor.moveToNext();
+//        }
+//        // Log.d(LOG_TAG, "Close cursor");
+//        cursor.close();
+//    }
 
-        Cursor cursor = db.getReadableDatabase().rawQuery("SELECT " + Movies.COLUMN_SORT_ORDER + " FROM " + tableName, null);
-
-     //   Log.d(LOG_TAG, "In TestTable() Cursor count " + cursor.getCount());
-        String value;
-
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            value = cursor.getString(cursor.getColumnIndex(Movies.COLUMN_SORT_ORDER));
-         //   Log.d(LOG_TAG, "In TestTable() Value " + value);
-            cursor.moveToNext();
-        }
-       // Log.d(LOG_TAG, "Close cursor");
-        cursor.close();
-    }
 }

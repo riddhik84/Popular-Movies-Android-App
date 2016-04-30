@@ -13,13 +13,13 @@ import com.myapps.rk.popularmovies.R;
 import com.myapps.rk.popularmovies.data.MoviesContract;
 
 /**
- * Created by RKs on 2/27/2016.
+ * Created by Riddhi Kakadia on 2/27/2016.
  */
 public class ReviewsAdapter extends CursorAdapter {
 
     private static final String LOG_TAG = ReviewsAdapter.class.getSimpleName();
 
-    public ReviewsAdapter(Context context, Cursor cursor, int flags, int loaderID) {
+    public ReviewsAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
     }
 
@@ -40,11 +40,11 @@ public class ReviewsAdapter extends CursorAdapter {
 
         String reviewAuthor = cursor.getString(cursor.getColumnIndex(MoviesContract.Reviews.COLUMN_AUTHOR));
       //  Log.d(LOG_TAG, "*************** Movie reviewAuthor ********* " + reviewAuthor);
-        viewHolder.reviewAuthor.setText("Author: " + reviewAuthor);
+        viewHolder.reviewAuthor.setText(context.getResources().getString(R.string.author_header) + " "+ reviewAuthor);
 
         String reviewContent = cursor.getString(cursor.getColumnIndex(MoviesContract.Reviews.COLUMN_CONTENT));
       //  Log.d(LOG_TAG, "*************** Movie reviewContent ********* " + reviewContent);
-        viewHolder.reviewContent.setText("Review: " + reviewContent + "\n");
+        viewHolder.reviewContent.setText(context.getResources().getString(R.string.review_header) + " "+ reviewContent + "\n");
     }
 
     public static class ViewHolder {

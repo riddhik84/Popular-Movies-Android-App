@@ -4,15 +4,19 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,13 +48,18 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
     final String LOG_TAG = MovieDetailActivity.class.getSimpleName();
 
+    private static final String MOVIE_SHARE_HASHTAG = " #PopularMoviesApp ";
+
     private static final int MOVIE_DETAIL_LOADER = 0;
     private static final int MOVIE_TRAILERS_LOADER = 1;
     private static final int MOVIE_REVIEWS_LOADER = 2;
     private static final int FAVOURITE_MOVIE_LOADER = 3;
 
+    private ShareActionProvider mShareActionProvider;
+
     boolean favorited = false;
     String mSortOrder;
+    String shareMovieTrailer = "";
 
     private static final String[] MOVIES_COLUMNS = {
             Movies._ID,
@@ -129,25 +138,23 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //super.onCreateView(inflater, container, savedInstanceState);
-
         View rootview = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, rootview);
 
-        mSortOrder = Utility.getPreferredLocation(getContext());
+        mSortOrder = Utility.getPreferredSorting(getContext());
 
         Bundle args = getArguments();
         if (args != null) {
             movieId = args.getString(Intent.EXTRA_TEXT);
-            Log.d(LOG_TAG, "getArguments() MovieID " + movieId);
+            //Log.d(LOG_TAG, "getArguments() MovieID " + movieId);
         }
 
         trailersListView = (ListView) rootview.findViewById(R.id.trailers_list_view);
-        mTrailersAdapter = new TrailersAdapter(getContext(), null, 0, MOVIE_TRAILERS_LOADER);
+        mTrailersAdapter = new TrailersAdapter(getContext(), null, 0);
         trailersListView.setAdapter(mTrailersAdapter);
 
         reviewsListView = (ListView) rootview.findViewById(R.id.reviews_list_view);
-        mReviewsAdapter = new ReviewsAdapter(getContext(), null, 0, MOVIE_REVIEWS_LOADER);
+        mReviewsAdapter = new ReviewsAdapter(getContext(), null, 0);
         reviewsListView.setAdapter(mReviewsAdapter);
 
         if (Utility.isNetworkConnected(getActivity())) {
@@ -155,7 +162,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                 //    Log.d(LOG_TAG, "isNetworkConnected() MovieID: " + movieId);
                 updateTrailersReviewsList();
             } else {
-                //   Log.e(LOG_TAG, "movieId is null");
+                Log.e(LOG_TAG, "movieId is null");
             }
         } else {
             Snackbar.make(getView(), "No internet connection!", Snackbar.LENGTH_LONG).show();
@@ -174,9 +181,33 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
         super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_share_movie, menu);
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+        // Get the provider and hold onto it to set/change the share intent.
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        // If onLoadFinished happens before this, we can go ahead and set the share intent now.
+        if (shareMovieTrailer != null && shareMovieTrailer.length() > 0) {
+            // Log.d(LOG_TAG, "shareMovieTrailer: " + shareMovieTrailer);
+            mShareActionProvider.setShareIntent(createShareMovieIntent());
+        }
+    }
+
+    private Intent createShareMovieIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        //Log.d(LOG_TAG, "createShareMovieIntent() shareMovieTrailer: " + shareMovieTrailer);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareMovieTrailer + MOVIE_SHARE_HASHTAG);
+        return shareIntent;
+    }
+
     void onFilterChanged() {
         //    Log.d(LOG_TAG, "In DetailF onFilterChanged()");
-        String sortOrder = Utility.getPreferredLocation(getContext());
+        String sortOrder = Utility.getPreferredSorting(getContext());
         if (sortOrder != mSortOrder) {
             updateTrailersReviewsList();
             getLoaderManager().restartLoader(MOVIE_DETAIL_LOADER, null, this);
@@ -201,7 +232,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
         if (movieId != null) {
 
-            String sortingOrder = Utility.getPreferredLocation(getActivity());
+            String sortingOrder = Utility.getPreferredSorting(getActivity());
 
             //Uri moviesUri = Movies.buildMoviesUriWithMovieId(movieId);
             Uri moviesUri = Movies.buildMoviesUri();
@@ -272,7 +303,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
         //   Log.d(LOG_TAG, "Fragment onLoadFinished() ");
 
-        String sortOrder = Utility.getPreferredLocation(getActivity());
+        String sortOrder = Utility.getPreferredSorting(getActivity());
         String movieName = "";
         String movieImage = "";
         String movieReleaseDate = "";
@@ -296,14 +327,15 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                     movie_name_header.setText(movieName);
                     Picasso.with(getContext()).
                             load(movieImage).
-                            placeholder(R.drawable.placeholder).
-                            error(R.drawable.error).
+                            placeholder(R.drawable.movie_icon).
+                            error(R.drawable.movie_icon).
                             noFade().
                             //fit().
                                     resize(650, 650).
                             //centerCrop().
                                     into(movie_image_thumbnail);
-                    movie_image_thumbnail.setContentDescription("Thumbnail of " +movieName);
+                    //Accessibility
+                    movie_image_thumbnail.setContentDescription("Thumbnail of " + movieName);
 
                     movie_release_date.setText("Release Date: " + movieReleaseDate);
                     movie_ratings.setText("Movie Rating: " + movieRatings + "/10");
@@ -318,10 +350,11 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                     //  Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER trailers count " + cursor.getCount());
 
                     cursor.moveToFirst();
+                    shareMovieTrailer = cursor.getString(cursor.getColumnIndex(Trailers.COLUMN_KEY));
                     do {
                         movie_trailers_header.setVisibility(View.VISIBLE);
                         mTrailersAdapter.swapCursor(cursor);
-                        //       Log.d(LOG_TAG, "URL: " + cursor.getString(cursor.getColumnIndex(Trailers.COLUMN_KEY)));
+                        //Log.d(LOG_TAG, "URL: " + cursor.getString(cursor.getColumnIndex(Trailers.COLUMN_KEY)));
                     }
                     while (cursor.moveToNext());
 
@@ -330,14 +363,13 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                             String url = mTrailersAdapter.getCursor().getString(mTrailersAdapter.getCursor().getColumnIndex(Trailers.COLUMN_KEY));
                             //       Log.d(LOG_TAG, "URL at clicked position: " + url);
-
-                            //Uri uri = Uri.parse("http://www.youtube.com");
                             Uri uri = Uri.parse(url);
                             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                             startActivity(intent);
                         }
                     });
                 }
+
                 break;
             }
             case MOVIE_REVIEWS_LOADER: {
@@ -357,7 +389,6 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                 break;
             }
             case FAVOURITE_MOVIE_LOADER: {
-
                 //   Log.d(LOG_TAG, "Inside onLoadFinished FAVOURITE_MOVIE_LOADER " + movieId);
                 if (cursor.getCount() > 0 && cursor != null) {
                     favButton.setImageDrawable(getResources().getDrawable(R.drawable.fav_selected));
@@ -377,7 +408,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                                     new String[]{movieId}
                             );
                             if (i > 0) {
-                                Toast.makeText(getContext(), "Removed from Favourites", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getContext().getResources().getString(R.string.removed_from_fav_toast), Toast.LENGTH_SHORT).show();
                             }
 
                         } else if (favorited == false) {
@@ -396,7 +427,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
                                 getActivity().getContentResolver().insert(FavouriteMovies.buildFavouriteMoviesUri(), values);
 
-                                Toast.makeText(getContext(), "Added to Favourites", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getContext().getResources().getString(R.string.added_to_fav_toast), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

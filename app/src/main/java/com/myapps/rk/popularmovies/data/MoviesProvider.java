@@ -14,7 +14,7 @@ import android.util.Log;
 import com.myapps.rk.popularmovies.data.MoviesContract.*;
 
 /**
- * Created by RKs on 4/10/2016.
+ * Created by Riddhi Kakadia on 4/10/2016.
  */
 public class MoviesProvider extends ContentProvider {
 

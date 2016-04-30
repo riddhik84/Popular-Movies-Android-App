@@ -13,7 +13,7 @@ import com.myapps.rk.popularmovies.R;
  */
 public class Utility {
 
-    public static String getPreferredLocation(Context context) {
+    public static String getPreferredSorting(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String sortOrder = prefs.getString(context.getString(R.string.pref_sort_key),
                 context.getString(R.string.pref_sort_default));

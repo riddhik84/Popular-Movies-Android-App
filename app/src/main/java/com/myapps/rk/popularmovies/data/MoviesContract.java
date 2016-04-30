@@ -1,5 +1,5 @@
 /**
- * Created by RKs on 4/10/2016.
+ * Created by Riddhi Kakadia on 4/10/2016.
  */
 
 package com.myapps.rk.popularmovies.data;
@@ -41,7 +41,7 @@ public class MoviesContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
 
-        public static Uri buildMoviesUri (long id){
+        public static Uri buildMoviesUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -77,7 +77,7 @@ public class MoviesContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVOURITE_MOVIES;
 
-        public static Uri buildFavouriteMoviesUri (long id){
+        public static Uri buildFavouriteMoviesUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -113,13 +113,13 @@ public class MoviesContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILERS;
 
-        public static Uri buildTrailersUri (long id){
+        public static Uri buildTrailersUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
         public static Uri buildTrailersUriWithMovieId(String movieID) {
-          //  Log.d("LOG_TAG", "buildTrailersUriWithMovieId() movieID " + movieID);
-           // Log.d("LOG_TAG", "buildTrailersUriWithMovieId() Uri " + CONTENT_URI.buildUpon().appendPath(movieID).build());
+            //  Log.d("LOG_TAG", "buildTrailersUriWithMovieId() movieID " + movieID);
+            // Log.d("LOG_TAG", "buildTrailersUriWithMovieId() Uri " + CONTENT_URI.buildUpon().appendPath(movieID).build());
 
             return CONTENT_URI.buildUpon().appendPath(movieID).build();
         }
@@ -150,7 +150,7 @@ public class MoviesContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEWS;
 
-        public static Uri buildReviewsUri (long id){
+        public static Uri buildReviewsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 

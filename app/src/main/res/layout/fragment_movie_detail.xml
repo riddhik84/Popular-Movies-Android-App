@@ -58,8 +58,8 @@
                         android:layout_marginLeft="15dp"
                         android:background="@android:color/transparent"
                         android:clickable="true"
-                        android:src="@drawable/fav_btn_image"
-                        android:contentDescription="@string/mark_fav_content_desc"/>
+                        android:contentDescription="@string/mark_fav_content_desc" />
+                    <!-- android:src="@drawable/fav_not_selected" -->
 
                 </LinearLayout>
 
@@ -109,7 +109,7 @@
                 android:textColor="@color/white"
                 android:textSize="20dp"
                 android:textStyle="bold"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <ListView
                 android:id="@+id/trailers_list_view"
@@ -130,7 +130,7 @@
                 android:textColor="@color/white"
                 android:textSize="20dp"
                 android:textStyle="bold"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
 
             <ListView

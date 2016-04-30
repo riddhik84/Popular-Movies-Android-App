@@ -14,13 +14,13 @@ import com.myapps.rk.popularmovies.data.MoviesContract;
 import com.squareup.picasso.Picasso;
 
 /**
- * Created by RKs on 2/27/2016.
+ * Created by Riddhi Kakadia on 2/27/2016.
  */
 public class MoviesAdapter extends CursorAdapter{
 
     private static final String LOG_TAG = MoviesAdapter.class.getSimpleName();
 
-    public MoviesAdapter(Context context, Cursor cursor, int flags, int loaderID){
+    public MoviesAdapter(Context context, Cursor cursor, int flags){
         super(context, cursor, flags);
     }
 
@@ -39,20 +39,21 @@ public class MoviesAdapter extends CursorAdapter{
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        //ImageView moviePoster = (ImageView) view.findViewById(R.id.movie_poster);
+        //ImageView moviePoster = (ImageView) view.findViewById(R.id.sample_img);
         String moviePosterImg = cursor.getString(cursor.getColumnIndex(MoviesContract.Movies.COLUMN_POSTER_PATH));
-      //  Log.d(LOG_TAG, "*************** Picasso Movie Poster ********* " + moviePosterImg);
+        //Log.d(LOG_TAG, "*************** Picasso moviePosterImg ********* " + moviePosterImg);
 
         Picasso.with(context).
                 load(moviePosterImg).
-                placeholder(R.drawable.placeholder).
-                error(R.drawable.error).
+                placeholder(R.drawable.movie_icon).
+                error(R.drawable.movie_icon).
                 noFade().
                 fit().
                 //resize(600, 600).
-                //centerCrop().
+                centerCrop().
                 into(viewHolder.moviePoster);
 
+        //Accessibility
         String movieName = cursor.getString(cursor.getColumnIndex(MoviesContract.Movies.COLUMN_ORIGINAL_TITLE));
         viewHolder.moviePoster.setContentDescription(movieName);
     }

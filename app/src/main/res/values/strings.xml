@@ -26,6 +26,13 @@
     <string name="title_reviews">Reviews</string>
 
     <string name="mark_fav_content_desc">Favourite movie</string>
+    <string name="action_share">Share</string>
+
+    <string name="author_header">Author:</string>
+    <string name="review_header">Review:</string>
+
+    <string name="added_to_fav_toast">Added to favourites</string>
+    <string name="removed_from_fav_toast">Removed from favourites</string>
 
 
 </resources>

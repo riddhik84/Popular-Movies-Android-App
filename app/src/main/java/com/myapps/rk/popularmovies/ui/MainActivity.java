@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mSortOrder = Utility.getPreferredLocation(this);
+        mSortOrder = Utility.getPreferredSorting(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
     @Override
     protected void onResume() {
         super.onResume();
-        String sortOrder = Utility.getPreferredLocation(this);
+        String sortOrder = Utility.getPreferredSorting(this);
 
         // update the movie details in our second pane using the fragment manager
         if (sortOrder != null && !sortOrder.equals(mSortOrder)) {
@@ -96,7 +96,7 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
                         .replace(R.id.movie_details_container, fragment, DETAIL_FRAGMENT_TAG)
                         .commit();
             } else {
-                Log.d(LOG_TAG, "In onItemSelected() mTwoPane: " + mTwoPane);
+                //Log.d(LOG_TAG, "In onItemSelected() mTwoPane: " + mTwoPane);
 
                 Intent intent = new Intent(this, MovieDetailActivity.class)
                         .setType("text/plain")

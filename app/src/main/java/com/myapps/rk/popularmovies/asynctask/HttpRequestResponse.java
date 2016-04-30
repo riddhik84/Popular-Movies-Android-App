@@ -7,7 +7,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by RKs on 4/13/2016.
+ * Created by Riddhi Kakadia on 4/13/2016.
  */
 public class HttpRequestResponse {
 
@@ -17,6 +17,6 @@ public class HttpRequestResponse {
         Request request = new Request.Builder().url(url).build();
 
         Response response = client.newCall(request).execute();
-        return response.body().string().toString();  //user string() to get response
+        return response.body().string().toString();  //use string() to get proper response format
     }
 }

@@ -8,11 +8,10 @@
         android:id="@+id/trailer_item_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/movie_trailer"
-        android:textColor="@color/white"
-        android:textSize="20dp"
         android:layout_gravity="center"
+        android:drawableLeft="@drawable/movie_trailer"
         android:gravity="center"
-        />
+        android:textColor="@color/white"
+        android:textSize="20dp" />
 
 </FrameLayout>

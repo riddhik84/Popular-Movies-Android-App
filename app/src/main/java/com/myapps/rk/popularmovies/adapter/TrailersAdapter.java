@@ -18,13 +18,13 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 /**
- * Created by RKs on 2/27/2016.
+ * Created by Riddhi Kakadia on 2/27/2016.
  */
-public class TrailersAdapter extends CursorAdapter{
+public class TrailersAdapter extends CursorAdapter {
 
     private static final String LOG_TAG = TrailersAdapter.class.getSimpleName();
 
-    public TrailersAdapter(Context context, Cursor cursor, int flags, int loaderID){
+    public TrailersAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
     }
 
@@ -43,20 +43,18 @@ public class TrailersAdapter extends CursorAdapter{
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        String trailerLink = cursor.getString(cursor.getColumnIndex(MoviesContract.Trailers.COLUMN_KEY));
-     //   Log.d(LOG_TAG, "*************** Movie Trailer link ********* " + trailerLink);
+//       String trailerLink = cursor.getString(cursor.getColumnIndex(MoviesContract.Trailers.COLUMN_KEY));
+//       Log.d(LOG_TAG, "*************** Movie Trailer link ********* " + trailerLink);
 
         String trailerName = cursor.getString(cursor.getColumnIndex(MoviesContract.Trailers.COLUMN_NAME));
-     //   Log.d(LOG_TAG, "*************** Movie Trailer trailerName ********* " + trailerName);
+//      Log.d(LOG_TAG, "*************** Movie Trailer trailerName ********* " + trailerName);
         viewHolder.movieTrailer.setText(trailerName);
-
-        viewHolder.movieTrailer.setDrawableleft(trailerName);
     }
 
     public static class ViewHolder {
         public final TextView movieTrailer;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             movieTrailer = (TextView) view.findViewById(R.id.trailer_item_view);
         }
     }
