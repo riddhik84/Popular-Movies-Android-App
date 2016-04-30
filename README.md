@@ -7,6 +7,8 @@ Stage 1 of Popular Movies app required to complete Udacity Android Developer Nan
 With this app, you can:
 * Discover the most popular or the highest rated movies
 * In the movies detail screen you can view movie thumbnail, movie release date, movie rating and movie overview.
+* The movie detail screen also shows movie trailers and movie reviews.
+* You can also mark the movie as favourite.
 
 ### Screenshots
 
