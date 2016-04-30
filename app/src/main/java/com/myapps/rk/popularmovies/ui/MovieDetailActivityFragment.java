@@ -284,35 +284,26 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                 if (cursor != null && cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     //Log.d(LOG_TAG, "In movie detail loader " + movieName);
-//                if (sortOrder.equalsIgnoreCase(getActivity().getString(R.string.pref_sort_favourite))) {
-//                    movieName = cursor.getString(cursor.getColumnIndex(FavouriteMovies.COLUMN_ORIGINAL_TITLE));
-//                    movieImage = cursor.getString(cursor.getColumnIndex(FavouriteMovies.COLUMN_POSTER_PATH));
-//                    movieReleaseDate = cursor.getString(cursor.getColumnIndex(FavouriteMovies.COLUMN_RELEASE_DATE));
-//                    movieRatings = cursor.getString(cursor.getColumnIndex(FavouriteMovies.COLUMN_VOTE_AVERAGE));
-//                    movieOverview = cursor.getString(cursor.getColumnIndex(FavouriteMovies.COLUMN_OVERVIEW));
-//                } else {
                     movieName = cursor.getString(cursor.getColumnIndex(Movies.COLUMN_ORIGINAL_TITLE));
                     movieImage = cursor.getString(cursor.getColumnIndex(Movies.COLUMN_POSTER_PATH));
                     movieReleaseDate = cursor.getString(cursor.getColumnIndex(Movies.COLUMN_RELEASE_DATE));
                     movieRatings = cursor.getString(cursor.getColumnIndex(Movies.COLUMN_VOTE_AVERAGE));
                     movieOverview = cursor.getString(cursor.getColumnIndex(Movies.COLUMN_OVERVIEW));
-//                }
 
 //                    Log.d(LOG_TAG, "In movie detail loader " + movieName);
 //                    Log.d(LOG_TAG, "In movie detail loader " + movieImage);
 
                     movie_name_header.setText(movieName);
-                    // Log.d(LOG_TAG, "movie_name_header.getText() " + movie_name_header.getText());
-
                     Picasso.with(getContext()).
                             load(movieImage).
                             placeholder(R.drawable.placeholder).
                             error(R.drawable.error).
                             noFade().
                             //fit().
-                                    resize(600, 650).
+                                    resize(650, 650).
                             //centerCrop().
                                     into(movie_image_thumbnail);
+                    movie_image_thumbnail.setContentDescription("Thumbnail of " +movieName);
 
                     movie_release_date.setText("Release Date: " + movieReleaseDate);
                     movie_ratings.setText("Movie Rating: " + movieRatings + "/10");

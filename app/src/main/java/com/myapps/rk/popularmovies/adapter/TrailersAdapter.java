@@ -49,6 +49,8 @@ public class TrailersAdapter extends CursorAdapter{
         String trailerName = cursor.getString(cursor.getColumnIndex(MoviesContract.Trailers.COLUMN_NAME));
      //   Log.d(LOG_TAG, "*************** Movie Trailer trailerName ********* " + trailerName);
         viewHolder.movieTrailer.setText(trailerName);
+
+        viewHolder.movieTrailer.setDrawableleft(trailerName);
     }
 
     public static class ViewHolder {
