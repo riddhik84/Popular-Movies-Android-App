@@ -129,6 +129,8 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //super.onCreateView(inflater, container, savedInstanceState);
+
         View rootview = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, rootview);
 
@@ -137,7 +139,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
         Bundle args = getArguments();
         if (args != null) {
             movieId = args.getString(Intent.EXTRA_TEXT);
-         //   Log.d(LOG_TAG, "getArguments() MovieID " + movieId);
+            Log.d(LOG_TAG, "getArguments() MovieID " + movieId);
         }
 
         trailersListView = (ListView) rootview.findViewById(R.id.trailers_list_view);
@@ -150,10 +152,10 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
         if (Utility.isNetworkConnected(getActivity())) {
             if (movieId != null) {
-            //    Log.d(LOG_TAG, "isNetworkConnected() MovieID: " + movieId);
+                //    Log.d(LOG_TAG, "isNetworkConnected() MovieID: " + movieId);
                 updateTrailersReviewsList();
             } else {
-             //   Log.e(LOG_TAG, "movieId is null");
+                //   Log.e(LOG_TAG, "movieId is null");
             }
         } else {
             Snackbar.make(getView(), "No internet connection!", Snackbar.LENGTH_LONG).show();
@@ -173,7 +175,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
     }
 
     void onFilterChanged() {
-    //    Log.d(LOG_TAG, "In DetailF onFilterChanged()");
+        //    Log.d(LOG_TAG, "In DetailF onFilterChanged()");
         String sortOrder = Utility.getPreferredLocation(getContext());
         if (sortOrder != mSortOrder) {
             updateTrailersReviewsList();
@@ -183,19 +185,19 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
             getLoaderManager().restartLoader(FAVOURITE_MOVIE_LOADER, null, this);
             //moviesAdapter.notifyDataSetChanged();
         } else {
-        //    Log.d(LOG_TAG, "No change in filter");
+            //    Log.d(LOG_TAG, "No change in filter");
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-       // onFilterChanged();
+        // onFilterChanged();
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle args) {
-     //   Log.d(LOG_TAG, "In DetailF onCreateLoader()");
+        //   Log.d(LOG_TAG, "In DetailF onCreateLoader()");
 
         if (movieId != null) {
 
@@ -222,7 +224,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                                 new String[]{movieId},
                                 null);
                     }
-                 //   Log.d(LOG_TAG, "Inside onCreateLoader() MOVIE_DETAIL_LOADER " + movieId);
+                    //   Log.d(LOG_TAG, "Inside onCreateLoader() MOVIE_DETAIL_LOADER " + movieId);
                     return new CursorLoader(getActivity(),
                             moviesUri,
                             MOVIES_COLUMNS,
@@ -232,7 +234,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
                 }
                 case MOVIE_TRAILERS_LOADER: {
-                 //   Log.d(LOG_TAG, "Inside onCreateLoader() MOVIE_TRAILERS_LOADER " + movieId);
+                    //   Log.d(LOG_TAG, "Inside onCreateLoader() MOVIE_TRAILERS_LOADER " + movieId);
 
                     return new CursorLoader(getActivity(),
                             trailersUri,
@@ -242,7 +244,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                             null);
                 }
                 case MOVIE_REVIEWS_LOADER: {
-                 //   Log.d(LOG_TAG, "Inside onCreateLoader() MOVIE_REVIEWS_LOADER " + movieId);
+                    //   Log.d(LOG_TAG, "Inside onCreateLoader() MOVIE_REVIEWS_LOADER " + movieId);
 
                     return new CursorLoader(getActivity(),
                             reviewsUri,
@@ -252,7 +254,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                             null);
                 }
                 case FAVOURITE_MOVIE_LOADER: {
-                 //   Log.d(LOG_TAG, "Inside onCreateLoader() FAVOURITE_MOVIE_LOADER " + movieId);
+                    //   Log.d(LOG_TAG, "Inside onCreateLoader() FAVOURITE_MOVIE_LOADER " + movieId);
 
                     return new CursorLoader(getActivity(),
                             favouriteMoviesUri,
@@ -268,7 +270,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
-     //   Log.d(LOG_TAG, "Fragment onLoadFinished() ");
+        //   Log.d(LOG_TAG, "Fragment onLoadFinished() ");
 
         String sortOrder = Utility.getPreferredLocation(getActivity());
         String movieName = "";
@@ -300,7 +302,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
 //                    Log.d(LOG_TAG, "In movie detail loader " + movieImage);
 
                     movie_name_header.setText(movieName);
-                   // Log.d(LOG_TAG, "movie_name_header.getText() " + movie_name_header.getText());
+                    // Log.d(LOG_TAG, "movie_name_header.getText() " + movie_name_header.getText());
 
                     Picasso.with(getContext()).
                             load(movieImage).
@@ -319,16 +321,16 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                 break;
             }
             case MOVIE_TRAILERS_LOADER: {
-             //   Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER " + movieId);
+                //   Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER " + movieId);
                 if (cursor != null && cursor.getCount() > 0) {
-                  //  Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER cursor > 0 " + movieId);
-                  //  Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER trailers count " + cursor.getCount());
+                    //  Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER cursor > 0 " + movieId);
+                    //  Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER trailers count " + cursor.getCount());
 
                     cursor.moveToFirst();
                     do {
                         movie_trailers_header.setVisibility(View.VISIBLE);
                         mTrailersAdapter.swapCursor(cursor);
-                 //       Log.d(LOG_TAG, "URL: " + cursor.getString(cursor.getColumnIndex(Trailers.COLUMN_KEY)));
+                        //       Log.d(LOG_TAG, "URL: " + cursor.getString(cursor.getColumnIndex(Trailers.COLUMN_KEY)));
                     }
                     while (cursor.moveToNext());
 
@@ -336,7 +338,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                             String url = mTrailersAdapter.getCursor().getString(mTrailersAdapter.getCursor().getColumnIndex(Trailers.COLUMN_KEY));
-                     //       Log.d(LOG_TAG, "URL at clicked position: " + url);
+                            //       Log.d(LOG_TAG, "URL at clicked position: " + url);
 
                             //Uri uri = Uri.parse("http://www.youtube.com");
                             Uri uri = Uri.parse(url);
@@ -348,16 +350,16 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                 break;
             }
             case MOVIE_REVIEWS_LOADER: {
-             //   Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER " + movieId);
+                //   Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_TRAILERS_LOADER " + movieId);
                 if (cursor != null && cursor.getCount() > 0) {
-                 //   Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_REVIEWS_LOADER cursor > 0 " + movieId);
-                  //  Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_REVIEWS_LOADER cursor.getCount() " + cursor.getCount());
+                    //   Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_REVIEWS_LOADER cursor > 0 " + movieId);
+                    //  Log.d(LOG_TAG, "Inside onLoadFinished MOVIE_REVIEWS_LOADER cursor.getCount() " + cursor.getCount());
 
                     cursor.moveToFirst();
                     do {
                         movie_reviews_header.setVisibility(View.VISIBLE);
                         mReviewsAdapter.swapCursor(cursor);
-                    //    Log.d(LOG_TAG, "Review: " + cursor.getString(cursor.getColumnIndex(Reviews.COLUMN_CONTENT)));
+                        //    Log.d(LOG_TAG, "Review: " + cursor.getString(cursor.getColumnIndex(Reviews.COLUMN_CONTENT)));
                     }
                     while (cursor.moveToNext());
                 }
@@ -365,7 +367,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
             }
             case FAVOURITE_MOVIE_LOADER: {
 
-             //   Log.d(LOG_TAG, "Inside onLoadFinished FAVOURITE_MOVIE_LOADER " + movieId);
+                //   Log.d(LOG_TAG, "Inside onLoadFinished FAVOURITE_MOVIE_LOADER " + movieId);
                 if (cursor.getCount() > 0 && cursor != null) {
                     favButton.setImageDrawable(getResources().getDrawable(R.drawable.fav_selected));
                     favorited = true;
@@ -378,7 +380,7 @@ public class MovieDetailActivityFragment extends Fragment implements LoaderManag
                     public void onClick(View v) {
                         if (favorited == true) {
                             favorited = false;
-                        //    Log.d(LOG_TAG, "Remove from favourite");
+                            //    Log.d(LOG_TAG, "Remove from favourite");
                             int i = getActivity().getContentResolver().delete(FavouriteMovies.buildFavouriteMoviesUri(),
                                     FavouriteMovies.COLUMN_MOVIE_ID + "=?",
                                     new String[]{movieId}

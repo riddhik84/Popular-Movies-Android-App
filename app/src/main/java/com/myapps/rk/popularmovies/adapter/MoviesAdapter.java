@@ -52,6 +52,9 @@ public class MoviesAdapter extends CursorAdapter{
                 //resize(600, 600).
                 //centerCrop().
                 into(viewHolder.moviePoster);
+
+        String movieName = cursor.getString(cursor.getColumnIndex(MoviesContract.Movies.COLUMN_ORIGINAL_TITLE));
+        viewHolder.moviePoster.setContentDescription(movieName);
     }
 
     public static class ViewHolder {

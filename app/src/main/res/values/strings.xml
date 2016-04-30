@@ -25,6 +25,7 @@
     <string name="title_trailers">Trailers</string>
     <string name="title_reviews">Reviews</string>
 
+    <string name="mark_fav_content_desc">Favourite movie</string>
 
 
 </resources>

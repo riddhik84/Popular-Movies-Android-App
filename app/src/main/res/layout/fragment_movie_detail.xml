@@ -1,5 +1,4 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
@@ -10,7 +9,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@android:color/holo_red_light"
+                android:background="@color/holo_red_light"
                 android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="25dp"
@@ -58,7 +58,8 @@
                         android:layout_marginLeft="15dp"
                         android:background="@android:color/transparent"
                         android:clickable="true"
-                        android:src="@drawable/fav_btn_image" />
+                        android:src="@drawable/fav_btn_image"
+                        android:contentDescription="@string/mark_fav_content_desc"/>
 
                 </LinearLayout>
 

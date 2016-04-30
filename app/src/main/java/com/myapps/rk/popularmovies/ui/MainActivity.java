@@ -81,7 +81,7 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
 
     @Override
     public void onItemSelected(String movieId) {
-      //  Log.d(LOG_TAG, "In onItemSelected() mTwoPane: " + mTwoPane);
+        //  Log.d(LOG_TAG, "In onItemSelected() mTwoPane: " + mTwoPane);
 
         if (Utility.isNetworkConnected(this) == true) {
 
@@ -96,14 +96,14 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
                         .replace(R.id.movie_details_container, fragment, DETAIL_FRAGMENT_TAG)
                         .commit();
             } else {
-          //      Log.d(LOG_TAG, "In onItemSelected() mTwoPane: " + mTwoPane);
+                Log.d(LOG_TAG, "In onItemSelected() mTwoPane: " + mTwoPane);
 
                 Intent intent = new Intent(this, MovieDetailActivity.class)
                         .setType("text/plain")
                         .putExtra(Intent.EXTRA_TEXT, movieId);
                 startActivity(intent);
             }
-        } else{
+        } else {
             Snackbar.make(getCurrentFocus(), "No internet connection!", Snackbar.LENGTH_SHORT).show();
         }
     }

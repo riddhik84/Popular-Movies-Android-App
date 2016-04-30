@@ -1,6 +1,7 @@
 package com.myapps.rk.popularmovies.ui;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Movie;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -22,16 +23,14 @@ public class MovieDetailActivity extends ActionBarActivity {
         setContentView(R.layout.activity_movie_detail);
 
         Bundle extras = getIntent().getExtras();
-
         if (extras != null) {
             movieId = extras.getString(Intent.EXTRA_TEXT);
         }
         if (savedInstanceState == null) {
             Bundle args = new Bundle();
             args.putString(Intent.EXTRA_TEXT, movieId);
-        //    Log.d(LOG_TAG, "Bundle MovieID " + args.getString(Intent.EXTRA_TEXT));
-
-         //   Log.d(LOG_TAG, "onCreate() MovieID " +movieId);
+            //    Log.d(LOG_TAG, "Bundle MovieID " + args.getString(Intent.EXTRA_TEXT));
+            //   Log.d(LOG_TAG, "onCreate() MovieID " +movieId);
             MovieDetailActivityFragment fragment = new MovieDetailActivityFragment();
             fragment.setArguments(args);
 
@@ -41,6 +40,17 @@ public class MovieDetailActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle saveState) {
+        super.onSaveInstanceState(saveState);
+        saveState.putString("MovieID", movieId);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
