@@ -16,6 +16,7 @@ With this app, you can:
 <img src="screenshots/Detail_Screen_Stage2.png" width="40%" />
 <img src="screenshots/Highly_Rated_Stage2.png" width="40%" />
 <img src="screenshots/Settings_Screen_Stage2.png" width="40%" />
+<img src="screenshots/Main_Screen_Tablet_Stage2.png" width="80%" />
 
 ## Libraries
 
