@@ -1,6 +1,10 @@
 package com.myapps.rk.popularmovies.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
@@ -24,6 +28,8 @@ import com.myapps.rk.popularmovies.model.MovieData;
 import com.myapps.rk.popularmovies.R;
 import com.myapps.rk.popularmovies.adapter.MoviesAdapter;
 import com.myapps.rk.popularmovies.asynctask.FetchMoviesTask;
+import com.myapps.rk.popularmovies.service.MoviesService;
+import com.myapps.rk.popularmovies.sync.MoviesSyncAdapter;
 import com.myapps.rk.popularmovies.utils.Utility;
 import com.myapps.rk.popularmovies.data.MoviesContract.*;
 
@@ -48,12 +54,14 @@ public class MainActivityFragment extends Fragment
 
     int mPosition = ListView.INVALID_POSITION;
     boolean firstLoad = false;
-    ContentValues movieDetailValues;
+    //ContentValues movieDetailValues;
 
     @Bind(R.id.movies_grid)
     GridView moviesGrid;
-    @Bind(R.id.no_movies_textview)
-    TextView noMoviesTextView;
+    @Bind(R.id.empty_movies_list_info)
+    TextView emptyMoviesListInfo;
+    @Bind(R.id.empty_movies_list_no_internet)
+    TextView emptyMoviesNoInternet;
 
     private static final String[] MOVIES_COLUMNS = {
             Movies._ID,
@@ -79,20 +87,54 @@ public class MainActivityFragment extends Fragment
     public MainActivityFragment() {
     }
 
+    //With AsyncTask
+//    private void updateMoviesList() {
+//        Log.d(LOG_TAG, "In updateMoviesList()");
+//
+//        FetchMoviesTask fetchMovies = new FetchMoviesTask(getContext());
+//        String sortOrder = Utility.getPreferredSorting(getContext());
+//        Log.d(LOG_TAG, "Selected sort order from settings is " + sortOrder);
+//
+//        if (sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_most_popular))
+//                || sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_high_rated))) {
+//            fetchMovies.execute(sortOrder);
+//        } else if (sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_favourite))) {
+//            getActivity().getContentResolver().query(FavouriteMovies.buildFavouriteMoviesUri(),
+//                    FAVOURITE_MOVIES_COLUMNS, null, null, null);
+//        }
+//    }
+
+    //With Service
+//    private void updateMoviesList() {
+//        //  Log.d(LOG_TAG, "In updateMoviesList()");
+//
+//       // Intent intent = new Intent(getActivity(), MoviesService.class);
+//        String sortOrder = Utility.getPreferredSorting(getContext());
+//        Log.d(LOG_TAG, "Selected sort order from settings is " + sortOrder);
+//
+//        Intent alarmIntent = new Intent(getActivity(), MoviesService.AlarmReceiver.class);
+//
+//        if (sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_most_popular))
+//                || sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_high_rated))) {
+//           // intent.putExtra(MoviesService.MOVIE_FILTER_EXTRA, sortOrder);
+//           // getActivity().startService(intent);
+//
+//            alarmIntent.putExtra(MoviesService.MOVIE_FILTER_EXTRA, sortOrder);
+//            PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+//            AlarmManager am = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+//            am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
+//
+//        } else if (sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_favourite))) {
+//            getActivity().getContentResolver().query(FavouriteMovies.buildFavouriteMoviesUri(),
+//                    FAVOURITE_MOVIES_COLUMNS, null, null, null);
+//        }
+//    }
+
+    //With Service
     private void updateMoviesList() {
-        //  Log.d(LOG_TAG, "In updateMoviesList()");
-
-        FetchMoviesTask fetchMovies = new FetchMoviesTask(getContext());
-        String sortOrder = Utility.getPreferredSorting(getContext());
-        //  Log.d(LOG_TAG, "Selected sort order from settings is " + sortOrder);
-
-        if (sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_most_popular))
-                || sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_high_rated))) {
-            fetchMovies.execute(sortOrder);
-        } else if (sortOrder.equalsIgnoreCase(getContext().getResources().getString(R.string.pref_sort_favourite))) {
-            getActivity().getContentResolver().query(FavouriteMovies.buildFavouriteMoviesUri(),
-                    FAVOURITE_MOVIES_COLUMNS, null, null, null);
-        }
+        //Initialize movies sync adapter
+        Log.d(LOG_TAG, "In updateMoviesList()");
+        MoviesSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
@@ -143,6 +185,8 @@ public class MainActivityFragment extends Fragment
 
         updateMoviesList();
         moviesAdapter = new MoviesAdapter(getContext(), null, 0);
+        View emptyView = emptyMoviesListInfo; //rootview.findViewById(R.id.empty_movies_list_info);
+        moviesGrid.setEmptyView(emptyView);
         moviesGrid.setAdapter(moviesAdapter);
 
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -225,7 +269,8 @@ public class MainActivityFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        //    Log.d(LOG_TAG, "In onLoadFinished()");
+        Log.d(LOG_TAG, "In onLoadFinished()");
+
         if (cursor != null && cursor.getCount() > 0) {
             moviesAdapter.swapCursor(cursor);
 
@@ -235,11 +280,14 @@ public class MainActivityFragment extends Fragment
                 moviesGrid.smoothScrollToPosition(mPosition);
             }
         } else {
-            //Toast.makeText(getContext(), "No movies to show!", Toast.LENGTH_SHORT).show();
-            moviesAdapter.swapCursor(null);
+            Log.d(LOG_TAG, "Empty Cursor for movies data");
+            boolean networkConnectivity = false;
 
-            noMoviesTextView.setText("No Movies to show!");
-            noMoviesTextView.setVisibility(View.VISIBLE);
+            moviesAdapter.swapCursor(null);
+            networkConnectivity = Utility.isNetworkConnected(getContext());
+            if (networkConnectivity == false) {
+                emptyMoviesNoInternet.setText(getResources().getString(R.string.empty_movies_no_internet));
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.myapps.rk.popularmovies.R;
+import com.myapps.rk.popularmovies.sync.MoviesSyncAdapter;
 import com.myapps.rk.popularmovies.utils.Utility;
 
 
@@ -40,6 +41,10 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
             mTwoPane = false;
             getSupportActionBar().setElevation(0f);
         }
+
+        //Initialize movies sync adapter
+        Log.d(LOG_TAG, "Initializing movies sync adapter");
+        MoviesSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override

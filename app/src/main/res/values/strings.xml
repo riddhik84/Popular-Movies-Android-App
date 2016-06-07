@@ -34,5 +34,10 @@
     <string name="added_to_fav_toast">Added to favourites</string>
     <string name="removed_from_fav_toast">Removed from favourites</string>
 
+    <string name="empty_movies_list_text">No Movies List Available</string>
+    <string name="empty_movies_no_internet">The network is not available to fetch data</string>
+
+    <string name="sync_account_type">movies.rk.com</string>
+    <string name="content_authority">com.myapps.rk.popularmovies</string>
 
 </resources>

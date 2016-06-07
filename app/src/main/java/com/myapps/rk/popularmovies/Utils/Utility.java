@@ -3,6 +3,7 @@ package com.myapps.rk.popularmovies.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
@@ -20,20 +21,35 @@ public class Utility {
         return sortOrder;
     }
 
-    public static boolean isNetworkConnected(Context context){
+    public static String networkType(Context context) {
         boolean wifiConnection = false;
         boolean dataConnection = false;
+        String networkType = "NO_NETWORK";
 
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo[] networkInfo = cm.getAllNetworkInfo();
+        //Network[] networks = cm.getAllNetworks();
+
         for (NetworkInfo ni : networkInfo) {
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
+                if (ni.isConnected()) {
                     wifiConnection = true;
+                    networkType = "WIFI";
+                }
             if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
+                if (ni.isConnected()) {
                     dataConnection = true;
+                    networkType = "MOBILE";
+                }
         }
-        return wifiConnection || dataConnection;
+       // return wifiConnection || dataConnection;
+        return networkType;
+    }
+
+    public static boolean isNetworkConnected(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }
