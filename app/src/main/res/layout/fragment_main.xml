@@ -30,12 +30,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="@string/empty_movies_list_text"
         android:textColor="@color/holo_red_light"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:text="@string/empty_movies_list_text"/>
 
     <TextView
-        android:id="@+id/empty_movies_list_no_internet"
+        android:id="@+id/empty_movies_list_reason"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"

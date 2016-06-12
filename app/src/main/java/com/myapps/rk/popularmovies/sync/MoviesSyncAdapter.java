@@ -2,22 +2,32 @@ package com.myapps.rk.popularmovies.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.myapps.rk.popularmovies.BuildConfig;
 import com.myapps.rk.popularmovies.R;
 import com.myapps.rk.popularmovies.asynctask.HttpRequestResponse;
 import com.myapps.rk.popularmovies.data.MoviesContract;
+import com.myapps.rk.popularmovies.ui.MainActivity;
 import com.myapps.rk.popularmovies.utils.Utility;
 
 import org.json.JSONArray;
@@ -25,6 +35,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.URL;
 import java.util.Vector;
 
@@ -38,6 +50,32 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
     ContentResolver mContentResolver;
+
+    private static final String[] NOTIFY_MOVIES_PROJECTION = new String[]{
+            MoviesContract.Movies.COLUMN_MOVIE_ID,
+            MoviesContract.Movies.COLUMN_ORIGINAL_TITLE,
+            MoviesContract.Movies.COLUMN_VOTE_AVERAGE,
+            MoviesContract.Movies.COLUMN_RELEASE_DATE,
+    };
+    // these indices must match the projection
+    private static final int INDEX_COLUMN_MOVIE_ID = 0;
+    private static final int INDEX_COLUMN_ORIGINAL_TITLE = 1;
+    private static final int INDEX_COLUMN_VOTE_AVERAGE = 2;
+    private static final int INDEX_COLUMN_RELEASE_DATE = 3;
+
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final int MOVIES_NOTIFICATION_ID = 3004;
+
+    //Annotations
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({STATUS_OK, STATUS_SERVER_DOWN, STATUS_SERVER_INVALID, STATUS_UNKNOWN})
+    public @interface ServerStatus {}
+
+    public static final int STATUS_OK = 0;
+    public static final int STATUS_SERVER_DOWN = 1;
+    public static final int STATUS_SERVER_INVALID = 2;
+    public static final int STATUS_UNKNOWN = 3;
+
 
     public MoviesSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -64,6 +102,9 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         String moviesJsonResponse = null;
 
         final String MOVIES_BASE_URL = getContext().getString(R.string.movies_base_url);
+        //final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+        //final String MOVIES_BASE_URL = "http://google.com/";
+        //final String MOVIES_BASE_URL = "http://google.com/ping?";
         final String QUERY_PARAM = "sort_by";
         final String API_KEY = "api_key";
 
@@ -94,14 +135,21 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
                 moviesJsonResponse = hrr.doGetRequest(moviesUrl.toString());
                 //    Log.d(LOG_TAG, "json response: " + moviesJsonResponse);
 
-                //Get data from Json and insert it in table
-                getMoviesFromJson(moviesJsonResponse, sortOrder);
+                if(moviesJsonResponse.length() == 0){
+                    setServerStatus(getContext(), STATUS_SERVER_DOWN);
+                } else {
+                    //Get data from Json and insert it in table
+                    setServerStatus(getContext(), STATUS_OK);
+                    getMoviesFromJson(moviesJsonResponse, sortOrder);
+                }
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(LOG_TAG, "IOException ", e);
+            setServerStatus(getContext(), STATUS_SERVER_DOWN);
             return;
         } catch (JSONException e) {
             Log.e(LOG_TAG, "JSON Exception", e);
+            setServerStatus(getContext(), STATUS_SERVER_INVALID);
             return;
         } finally {
 
@@ -111,6 +159,8 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
 
     protected void getMoviesFromJson(String movieJsonString, String sortOrder) throws JSONException {
         //   Log.d(LOG_TAG, "getMoviesFromJson() sortOrder " + sortOrder);
+
+        final String OWM_MESSAGE_CODE = "cod";
 
         final String POSTER_PATH = "poster_path";
         final String OVERVIEW = "overview";
@@ -124,6 +174,12 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         String fullPosterPath = "";
 
         JSONObject moviesOutput = new JSONObject(movieJsonString);
+
+        if(moviesOutput.has(OWM_MESSAGE_CODE)){
+            int error_404 = moviesOutput.getInt(OWM_MESSAGE_CODE);
+            Log.e(LOG_TAG, "Movie data not recognized " + error_404);
+            return;
+        }
         JSONArray moviesArray = moviesOutput.getJSONArray("results");
         //Log.d(LOG_TAG, "****** JSON result length.. " + results.length());
 
@@ -155,8 +211,11 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
             cVVector.toArray(cvArray);
             inserted = getContext().getContentResolver().bulkInsert(MoviesContract.Movies.CONTENT_URI, cvArray);
         }
-        //Log.d(LOG_TAG, "FetchMoviesTask Complete. " + inserted + " Inserted");
 
+        //Notification
+        notifyNewPopularMovie();
+
+        //Log.d(LOG_TAG, "FetchMoviesTask Complete. " + inserted + " Inserted");
         //TestTable(Movies.TABLE_NAME, sortOrder);
     }
 
@@ -243,4 +302,96 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         getSyncAccount(context);
     }
 
+    // Generate New movie notification
+    private void notifyNewPopularMovie() {
+        Context context = getContext();
+
+        SharedPreferences prefss = PreferenceManager.getDefaultSharedPreferences(context);
+        String displayNotificationsKey = context.getString(R.string.pref_enable_notifications_key);
+        boolean displayNotifications = prefss.getBoolean(displayNotificationsKey,
+                Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
+        Log.d(LOG_TAG, "displayNotifications: " +displayNotifications);
+        if (displayNotifications) {
+
+            //checking the last update and notify if it' the first of the day
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String lastNotificationKey = context.getString(R.string.pref_last_notification);
+            long lastSync = prefs.getLong(lastNotificationKey, 0);
+
+            if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS) {
+                // Last sync was more than 1 day ago, let's send a notification with the new info.
+                String sortingQuery = Utility.getPreferredSorting(context);
+
+                Uri movieUri = MoviesContract.Movies.buildMoviesUri();
+
+                // we'll query our contentProvider, as always
+                Cursor cursor = context.getContentResolver().query(
+                        movieUri,
+                        NOTIFY_MOVIES_PROJECTION,
+                        MoviesContract.Movies.COLUMN_SORT_ORDER + "=?",
+                        new String[]{"mostpopular"},
+                        null);
+
+                if (cursor.moveToFirst()) {
+                    Log.d(LOG_TAG, "cursor.moveToFirst() ");
+
+                    int movieID = cursor.getInt(INDEX_COLUMN_MOVIE_ID);
+                    String movieTitle = cursor.getString(INDEX_COLUMN_ORIGINAL_TITLE);
+                    String movieVotes = cursor.getString(INDEX_COLUMN_VOTE_AVERAGE);
+                    String movieReleaseDt = cursor.getString(INDEX_COLUMN_RELEASE_DATE);
+
+                    String notificationTitle = context.getString(R.string.app_name);
+
+                    // Define the text of the movie.
+                    String contentText = String.format(context.getString(R.string.format_notification),
+                            movieTitle,
+                            movieVotes,
+                            movieReleaseDt);
+
+                    //build your notification here.
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(getContext())
+                                    .setSmallIcon(R.drawable.movie_notification)
+                                    .setContentTitle(notificationTitle)
+                                    .setContentText(contentText);
+                    // Creates an explicit intent for an Activity in your app
+                    Intent resultIntent = new Intent(getContext(), MainActivity.class);
+                    // The stack builder object will contain an artificial back stack for the
+                    // started Activity.
+                    // This ensures that navigating backward from the Activity leads out of
+                    // your application to the Home screen.
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
+                    // Adds the back stack for the Intent (but not the Intent itself)
+                    stackBuilder.addParentStack(MainActivity.class);
+                    // Adds the Intent that starts the Activity to the top of the stack
+                    stackBuilder.addNextIntent(resultIntent);
+                    PendingIntent resultPendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    mBuilder.setContentIntent(resultPendingIntent);
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    // mId allows you to update the notification later on.
+                    mNotificationManager.notify(MOVIES_NOTIFICATION_ID, mBuilder.build());
+
+                    //refreshing last sync
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putLong(lastNotificationKey, System.currentTimeMillis());
+                    editor.commit();
+                } else {
+                    Log.d(LOG_TAG, "NOT cursor.moveToFirst() ");
+                }
+            }
+
+        }
+    }
+
+    static private void setServerStatus(Context c, @ServerStatus int serverStat){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putInt(c.getString(R.string.pref_server_status_key), serverStat);
+        spe.commit();
+    }
 }

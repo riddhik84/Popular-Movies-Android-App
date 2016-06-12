@@ -5,8 +5,10 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -42,7 +44,7 @@ import butterknife.ButterKnife;
 
 
 public class MainActivityFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
@@ -60,8 +62,8 @@ public class MainActivityFragment extends Fragment
     GridView moviesGrid;
     @Bind(R.id.empty_movies_list_info)
     TextView emptyMoviesListInfo;
-    @Bind(R.id.empty_movies_list_no_internet)
-    TextView emptyMoviesNoInternet;
+    @Bind(R.id.empty_movies_list_reason)
+    TextView emptyMoviesListReason;
 
     private static final String[] MOVIES_COLUMNS = {
             Movies._ID,
@@ -104,7 +106,7 @@ public class MainActivityFragment extends Fragment
 //        }
 //    }
 
-    //With Service
+    //With Service and alamIntent
 //    private void updateMoviesList() {
 //        //  Log.d(LOG_TAG, "In updateMoviesList()");
 //
@@ -130,7 +132,7 @@ public class MainActivityFragment extends Fragment
 //        }
 //    }
 
-    //With Service
+    //With SyncAdapter Service
     private void updateMoviesList() {
         //Initialize movies sync adapter
         Log.d(LOG_TAG, "In updateMoviesList()");
@@ -239,8 +241,18 @@ public class MainActivityFragment extends Fragment
 
     @Override
     public void onResume() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.registerOnSharedPreferenceChangeListener(this);
         super.onResume();
         // Log.d(LOG_TAG, "In onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
+        // Log.d(LOG_TAG, "In onStart()");
     }
 
     @Override
@@ -284,10 +296,11 @@ public class MainActivityFragment extends Fragment
             boolean networkConnectivity = false;
 
             moviesAdapter.swapCursor(null);
-            networkConnectivity = Utility.isNetworkConnected(getContext());
-            if (networkConnectivity == false) {
-                emptyMoviesNoInternet.setText(getResources().getString(R.string.empty_movies_no_internet));
-            }
+//            networkConnectivity = Utility.isNetworkConnected(getContext());
+//            if (networkConnectivity == false) {
+//                emptyMoviesListReason.setText(getResources().getString(R.string.empty_movies_no_internet));
+//            }
+            updateEmptyView();
         }
     }
 
@@ -295,6 +308,41 @@ public class MainActivityFragment extends Fragment
     public void onLoaderReset(Loader<Cursor> loader) {
         //   Log.d(LOG_TAG, "In onLoaderReset()");
         moviesAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_server_status_key))) {
+            updateEmptyView();
+        }
+    }
+
+    /*
+        Updates the empty list view with contextually relevant information that the user can
+        use to determine why they aren't seeing weather.
+     */
+    private void updateEmptyView() {
+        if (moviesAdapter.getCount() == 0) {
+            //TextView tv = (TextView) getView().findViewById(R.id.empty_movies_list_info);
+            if (null != emptyMoviesListReason) {
+                // if cursor is empty, why? do we have an invalid location
+                String message = "";
+                @MoviesSyncAdapter.ServerStatus int location = Utility.getServerStatus(getActivity());
+                switch (location) {
+                    case MoviesSyncAdapter.STATUS_SERVER_DOWN:
+                        message = getString(R.string.empty_movies_server_down);
+                        break;
+                    case MoviesSyncAdapter.STATUS_SERVER_INVALID:
+                        message = getString(R.string.empty_movies_server_error);
+                        break;
+                    default:
+                        if (!Utility.isNetworkConnected(getActivity())) {
+                            message = getString(R.string.empty_movies_no_internet);
+                        }
+                }
+                emptyMoviesListReason.setText(message);
+            }
+        }
     }
 
     public interface Callback {

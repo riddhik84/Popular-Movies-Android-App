@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
 import com.myapps.rk.popularmovies.R;
+import com.myapps.rk.popularmovies.sync.MoviesSyncAdapter;
 
 /**
  * Created by RKs on 4/15/2016.
@@ -51,5 +52,12 @@ public class Utility {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
+    }
+
+    @SuppressWarnings("ResourceType")
+    static public @MoviesSyncAdapter.ServerStatus
+    int getServerStatus(Context c){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        return sp.getInt(c.getString(R.string.pref_server_status_key), MoviesSyncAdapter.STATUS_UNKNOWN);
     }
 }
