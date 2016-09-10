@@ -2,8 +2,14 @@
 <resources>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="holo_red_light">#ffff4444</color>
-    <color name="holo_red_dark">#ffcc0000</color>
+    <color name="holo_red_light">#F44336</color>
+    <color name="holo_red_dark">#F44336</color>
     <color name="transparent">#00000000</color>
+
+    <!-- Material design colors Amber -->
+    <color name="colorPrimary">#F44336</color>
+    <color name="colorPrimaryDark">#B71C1C</color>
+    <color name="colorPrimaryLight">#FFCDD2</color>
+    <color name="colorPrimaryContrast">#EEFF41</color>
 
 </resources>

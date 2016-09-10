@@ -6,20 +6,26 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.myapps.rk.popularmovies.R;
 import com.myapps.rk.popularmovies.sync.MoviesSyncAdapter;
 import com.myapps.rk.popularmovies.utils.Utility;
 
 
-public class MainActivity extends ActionBarActivity implements MainActivityFragment.Callback {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
 
     public final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private final String DETAIL_FRAGMENT_TAG = "DFTAG";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private boolean mTwoPane;
     private String mSortOrder;
 
@@ -29,6 +35,11 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(getString(R.string.app_name));
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         if (findViewById(R.id.movie_details_container) != null) {
             mTwoPane = true;
@@ -45,6 +56,13 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
         //Initialize movies sync adapter
         Log.d(LOG_TAG, "Initializing movies sync adapter");
         MoviesSyncAdapter.initializeSyncAdapter(this);
+
+        // This is where we could either prompt a user that they should install
+        // the latest version of Google Play Services, or add an error snackbar
+        // that some features won't be available.
+//        if (!checkPlayServices()) {
+//            Toast.makeText(this, "Install latest version of google play services", Toast.LENGTH_LONG).show();
+//        }
     }
 
     @Override
@@ -111,5 +129,20 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
         } else {
             Snackbar.make(getCurrentFocus(), "No internet connection!", Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode == ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 }

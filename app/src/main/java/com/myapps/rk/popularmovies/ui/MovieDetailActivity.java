@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.graphics.Movie;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,7 +14,7 @@ import android.view.MenuItem;
 import com.myapps.rk.popularmovies.R;
 
 
-public class MovieDetailActivity extends ActionBarActivity {
+public class MovieDetailActivity extends AppCompatActivity {
 
     public static String LOG_TAG = MovieDetailActivity.class.getSimpleName();
     String movieId = "";
@@ -21,6 +23,11 @@ public class MovieDetailActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
